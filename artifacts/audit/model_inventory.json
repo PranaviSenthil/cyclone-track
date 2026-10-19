@@ -1,0 +1,100 @@
+{
+  "audit_timestamp": "2026-10-19T21:22:00Z",
+  "audit_environment": {
+    "os": "Windows",
+    "python_version": "3.10.0",
+    "pytorch_version": "2.10.0+cpu"
+  },
+  "models": [
+    {
+      "model_id": "model_a_detector",
+      "model_name": "Model A — Cyclone Detection & Center Localization",
+      "architecture": "CycloneDetectorNet (4-stage Conv2d + BatchNorm + Dual Linear Heads)",
+      "source_file": "ml/models/detector.py",
+      "checkpoint_file": "artifacts/checkpoints/detector.pt",
+      "checkpoint_size_bytes": 5776225,
+      "checkpoint_sha256": "eca4493e2cab8efe0da450b8e60936e269e0c0dcbd86faa2437ba5cbbe111a45",
+      "parameter_count": 1441224,
+      "state_dict_keys": 36,
+      "training_script": "ml/training/train_all_models.py (train_image_models)",
+      "training_status": "IMPLEMENTATION_EXISTS_TRAINING_UNVERIFIED",
+      "classification_verdict": "Implementation exists, training unverified",
+      "evidence": "In train_all_models.py:159, det_model.state_dict() is saved immediately after instantiation without any training loop, backpropagation, or optimizer step. Inference produces ~0.50 confidence and ~(256, 256) pixel center on both all-black and all-white images."
+    },
+    {
+      "model_id": "model_b_classifier",
+      "model_name": "Model B — Convective Structure Classification",
+      "architecture": "CycloneClassifierNet (4-stage ConvNet + AdaptiveAvgPool + Dropout + FC)",
+      "source_file": "ml/models/classifier.py",
+      "checkpoint_file": "artifacts/checkpoints/classifier.pt",
+      "checkpoint_size_bytes": 1705845,
+      "checkpoint_sha256": "57b4c19cece7de8b2197eef2e0338628f891beda69c716dc1dc73fcedb2a4d4b",
+      "parameter_count": 423881,
+      "state_dict_keys": 32,
+      "training_script": "ml/training/train_all_models.py (train_image_models)",
+      "training_status": "IMPLEMENTATION_EXISTS_TRAINING_UNVERIFIED",
+      "classification_verdict": "Implementation exists, training unverified",
+      "evidence": "In train_all_models.py:160, cls_model.state_dict() is saved directly after initialization. No training iterations were executed. Prediction produces ~0.21 uniform probability for class 0 across all benchmark images (Biparjoy, Depression, or blank)."
+    },
+    {
+      "model_id": "model_c_track_gru",
+      "model_name": "Model C — Cyclone Track Prediction",
+      "architecture": "CycloneGRUTrackNet (2-layer GRU, hidden_dim=64, 3 displacement heads for +6h, +12h, +24h)",
+      "source_file": "ml/models/track_predictor.py",
+      "checkpoint_file": "artifacts/checkpoints/track_gru.pt",
+      "checkpoint_size_bytes": 179039,
+      "checkpoint_sha256": "58e68783b275cf966dc31f2bbb7b8f69f1ce443ed2f4b5bf6b729fcb2adcbc8a",
+      "parameter_count": 43334,
+      "state_dict_keys": 16,
+      "training_script": "ml/training/train_all_models.py (train_track_gru)",
+      "training_status": "TRAINED_ARTIFACTS_FOUND_VALIDATION_INCOMPLETE",
+      "classification_verdict": "Trained artifacts found, validation incomplete",
+      "evidence": "Trained for 35 epochs on 23 historical sequences from Fani, Tauktae, and Mocha using Adam and MSELoss. Evaluated on Amphan and Biparjoy. Real measured test error was 68.9 km (6h), 143.4 km (12h), 271.8 km (24h). Underperforms the simple motion baseline (58.6 km at 24h) due to tiny training sample size (23 sequences)."
+    },
+    {
+      "model_id": "model_d_intensity",
+      "model_name": "Model D — Intensity Prediction",
+      "architecture": "IntensityRegressionNet (3-layer MLP predicting delta wind and delta pressure)",
+      "source_file": "ml/models/intensity_predictor.py",
+      "checkpoint_file": "artifacts/checkpoints/intensity.pt",
+      "checkpoint_size_bytes": 16037,
+      "checkpoint_sha256": "3e088ad36ec2874d1498a59e1de7bbfc466b6f346e8a4c7121fe194532d29480",
+      "parameter_count": 2982,
+      "state_dict_keys": 10,
+      "training_script": "ml/training/train_all_models.py:163",
+      "training_status": "PROTOTYPE_OR_HEURISTIC_ONLY",
+      "classification_verdict": "Prototype or heuristic only",
+      "evidence": "IntensityPredictorService in ml/models/intensity_predictor.py does not call load_state_dict() on the checkpoint path, instantiating an uninitialized network. Hardcodes self.is_trained = False in line 41. Reported MAE of 7.1 kts is a hardcoded literal in fusion.py rather than an evaluated metric."
+    },
+    {
+      "model_id": "model_e_uncertainty",
+      "model_name": "Model E — Forecast Uncertainty Estimation",
+      "architecture": "ForecastUncertaintyEngine (Geometric circle/hull projection)",
+      "source_file": "ml/models/uncertainty.py",
+      "checkpoint_file": null,
+      "checkpoint_size_bytes": null,
+      "checkpoint_sha256": null,
+      "parameter_count": 0,
+      "state_dict_keys": 0,
+      "training_script": null,
+      "training_status": "PROTOTYPE_OR_HEURISTIC_ONLY",
+      "classification_verdict": "Prototype or heuristic only",
+      "evidence": "Uses a fixed dictionary of operational rule-of-thumb radii (r80_km = 45/80/150/280 km; r95_km = 75/135/250/460 km) to plot Leaflet polygons. Not a trained quantile regression or ensemble Monte Carlo model."
+    },
+    {
+      "model_id": "model_f_fusion",
+      "model_name": "Model F — Multi-Source Fusion",
+      "architecture": "MultiSourceFusionService (Sequential wrapper over individual services)",
+      "source_file": "ml/models/fusion.py",
+      "checkpoint_file": null,
+      "checkpoint_size_bytes": null,
+      "checkpoint_sha256": null,
+      "parameter_count": 0,
+      "state_dict_keys": 0,
+      "training_script": null,
+      "training_status": "PLACEHOLDER_MOCK_IMPLEMENTATION",
+      "classification_verdict": "Placeholder/mock implementation",
+      "evidence": "In ml/models/fusion.py:85-105, fused_track merely copies gru_track coordinates with round(base_lat, 2). Symmetry factor is unused. run_benchmark_ablation() returns a static dictionary of hardcoded numbers (36.4, 63.8, 122.9, 7.1, 0.887). No neural fusion weights exist."
+    }
+  ]
+}

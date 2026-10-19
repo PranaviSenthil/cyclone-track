@@ -1,0 +1,83 @@
+{
+  "dataset_metadata": {
+    "name": "NOAA NCEI IBTrACS North Indian Ocean (NI) Subset",
+    "version": "v04r01",
+    "source_url": "https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.NI.list.v04r01.csv",
+    "retrieval_timestamp_utc": "2026-10-19T18:02:57.235893Z",
+    "raw_file_path": "ml/data/raw/ibtracs/ibtracs.NI.list.v04r01.csv",
+    "raw_file_size_bytes": 27886424,
+    "raw_file_sha256": "b30984b56c428391eff17a44d1a9662e444fc4ba419417e9613c18db07424155"
+  },
+  "quality_counts": {
+    "total_raw_rows": 62864,
+    "unique_cyclone_sids": 1859,
+    "temporal_range": {
+      "start": "1842-10-25T03:00:00Z",
+      "end": "2026-09-24T00:00:00Z",
+      "start_year": 1842,
+      "end_year": 2026
+    },
+    "valid_coordinate_rows": 62864,
+    "invalid_coordinate_rows": 0,
+    "valid_timestamp_rows": 62864,
+    "invalid_timestamp_rows": 0,
+    "duplicate_observations_dropped": 0,
+    "missing_values_by_column": {
+      "WMO_WIND": {
+        "valid_count": 7930,
+        "missing_count": 54934,
+        "missing_pct": 87.39
+      },
+      "WMO_PRES": {
+        "valid_count": 8228,
+        "missing_count": 54636,
+        "missing_pct": 86.91
+      },
+      "USA_WIND": {
+        "valid_count": 16373,
+        "missing_count": 46491,
+        "missing_pct": 73.95
+      },
+      "USA_PRES": {
+        "valid_count": 7121,
+        "missing_count": 55743,
+        "missing_pct": 88.67
+      },
+      "NEWDELHI_WIND": {
+        "valid_count": 9467,
+        "missing_count": 53397,
+        "missing_pct": 84.94
+      },
+      "NEWDELHI_PRES": {
+        "valid_count": 8605,
+        "missing_count": 54259,
+        "missing_pct": 86.31
+      }
+    },
+    "clean_full_rows_saved": 62864,
+    "modern_era_rows_saved": 18177,
+    "modern_era_storms_saved": 466
+  },
+  "split_summary": {
+    "algorithm": "DETERMINISTIC_WHOLE_STORM_SPLIT",
+    "random_seed": 42,
+    "train_storms": 326,
+    "train_observations": 12661,
+    "val_storms": 70,
+    "val_observations": 2821,
+    "test_storms": 70,
+    "test_observations": 2695,
+    "disjoint_proof": "VERIFIED (0 intersecting cyclone IDs)",
+    "holdout_storms_preserved": {
+      "AMPHAN": true,
+      "BIPARJOY": true,
+      "DANA": true
+    }
+  },
+  "parser_warnings": [
+    "Source contains header line at row 0 and units line at row 1; row 1 must be skipped during numeric parsing.",
+    "Historical wind and pressure records prior to 1980 have high missingness (>80%) due to pre-satellite reconnaissance limits.",
+    "Modern era (>=1980) has 93.0% valid consensus wind speed coverage across 466 storms."
+  ],
+  "validation_verdict": "VERIFIED_OPERATIONAL"
+}

@@ -1,0 +1,17 @@
+{
+  "dataset_name": "NOAA IBTrACS North Indian Ocean (NI) Best-Track Dataset",
+  "dataset_version": "v04r01",
+  "source_authority": "NOAA / NCEI (National Centers for Environmental Information)",
+  "source_url": "https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.NI.list.v04r01.csv",
+  "citation": "Knapp, K. R., et al. (2018). International Best Track Archive for Climate Stewardship (IBTrACS) Project, Version 4. NOAA National Centers for Environmental Information.",
+  "license": "Public Domain / NOAA Open Data Policy",
+  "local_path": "ml/data/raw/ibtracs/ibtracs.NI.list.v04r01.csv",
+  "file_size_bytes": 27886424,
+  "sha256": "b30984b56c428391eff17a44d1a9662e444fc4ba419417e9613c18db07424155",
+  "md5": "d1ff7db4be476bc123a6810a031638ef",
+  "download_timestamp_utc": "2026-10-19T17:57:57.920031Z",
+  "header_row_index": 0,
+  "units_row_index": 1,
+  "total_columns": 174,
+  "status": "DOWNLOAD_VERIFIED"
+}

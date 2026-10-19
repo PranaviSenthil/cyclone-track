@@ -1,0 +1,126 @@
+{
+  "inventory_metadata": {
+    "project": "CYCLOTRACK — AI-Driven Digital Twin for Multi-Source Tropical Cyclone Pattern Analysis & Prediction",
+    "problem_statement": "SIH26070",
+    "team": "MISSION_POSSIBLE",
+    "phase": "PHASE_0_BASELINE_INVENTORY",
+    "timestamp": "2026-10-19T22:40:00Z"
+  },
+  "environment": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "cpu_logical_cores": 16,
+    "total_ram_gb": 15.33,
+    "python_version": "3.10.0",
+    "pytorch_version": "2.10.0+cpu",
+    "cuda_available": false,
+    "hardware_acceleration": "CPU_ONLY",
+    "node_version": "v22.14.0",
+    "npm_version": "10.9.2",
+    "frontend_bundler": "vite v8.3.4",
+    "ui_framework": "React 19, TypeScript, Tailwind CSS, Leaflet 1.9.4, Recharts 2.15.1"
+  },
+  "runtime_services": {
+    "backend_daemon": {
+      "host": "127.0.0.1",
+      "port": 8000,
+      "health_url": "http://127.0.0.1:8000/api/health",
+      "docs_url": "http://127.0.0.1:8000/docs",
+      "status": "RUNNING_HEALTHY"
+    },
+    "frontend_daemon": {
+      "host": "127.0.0.1",
+      "port": 5173,
+      "url": "http://127.0.0.1:5173/",
+      "status": "RUNNING_READY"
+    }
+  },
+  "api_surface": [
+    { "method": "GET", "path": "/api/health", "purpose": "API process health check" },
+    { "method": "GET", "path": "/api/data/sources", "purpose": "Data source transparency & provider health" },
+    { "method": "GET", "path": "/api/satellite/available", "purpose": "Catalog of NASA GIBS layers and sample benchmarks" },
+    { "method": "GET", "path": "/api/satellite/latest", "purpose": "Latest cataloged satellite observation metadata" },
+    { "method": "GET", "path": "/api/cyclones/active", "purpose": "Current basin active cyclone status" },
+    { "method": "GET", "path": "/api/cyclones/historical", "purpose": "List of historical North Indian Ocean cyclones" },
+    { "method": "GET", "path": "/api/cyclones/{storm_id}", "purpose": "Detailed synoptic trajectory for a specific storm" },
+    { "method": "POST", "path": "/api/detect", "purpose": "Model A center localization inference" },
+    { "method": "POST", "path": "/api/classify", "purpose": "Model B convective structure classification" },
+    { "method": "POST", "path": "/api/predict", "purpose": "Model C/D/F multi-horizon track & intensity prediction" },
+    { "method": "GET", "path": "/api/models/status", "purpose": "Model readiness and checkpoint status" },
+    { "method": "GET", "path": "/api/models/metrics", "purpose": "Evaluation metrics and ablation matrix" },
+    { "method": "POST", "path": "/api/fusion/evaluate", "purpose": "Ablation study evaluation" },
+    { "method": "POST", "path": "/api/alerts/demo", "purpose": "Demonstration early warning bulletin generator" }
+  ],
+  "frontend_sections": [
+    { "id": "overview", "component": "OverviewSection.tsx", "status": "OPERATIONAL_NEEDS_HONEST_METRICS" },
+    { "id": "map", "component": "InteractiveMapSection.tsx", "status": "OPERATIONAL" },
+    { "id": "satellite", "component": "SatelliteExplorerSection.tsx", "status": "OPERATIONAL_GIBS_TILES_ONLY" },
+    { "id": "vision", "component": "AIVisionSection.tsx", "status": "OPERATIONAL_USES_RANDOM_WEIGHTS" },
+    { "id": "forecast", "component": "TrackIntensitySection.tsx", "status": "OPERATIONAL_CONTAINS_HARDCODED_METRICS" },
+    { "id": "fusion", "component": "MultiSourceFusionSection.tsx", "status": "OPERATIONAL_CONTAINS_HARDCODED_ABLATION" },
+    { "id": "historical", "component": "HistoricalArchiveSection.tsx", "status": "OPERATIONAL_REAL_IBTRACS" },
+    { "id": "risk", "component": "RiskImpactSection.tsx", "status": "OPERATIONAL_DEMO_ALERTS" },
+    { "id": "models", "component": "ModelReadinessSection.tsx", "status": "OPERATIONAL_NEEDS_REAL_TRAINING_STATUS" }
+  ],
+  "model_artifacts": [
+    {
+      "name": "track_gru.pt",
+      "path": "artifacts/checkpoints/track_gru.pt",
+      "size_bytes": 179039,
+      "sha256": "58e68783b275cf966dc31f2bbb7b8f69f1ce443ed2f4b5bf6b729fcb2adcbc8a",
+      "model_type": "CycloneGRUTrackNet",
+      "real_state": "TRAINED_UNDERFIT",
+      "actual_test_error_24h_km": 271.8,
+      "actual_baseline_error_24h_km": 58.6
+    },
+    {
+      "name": "detector.pt",
+      "path": "artifacts/checkpoints/detector.pt",
+      "size_bytes": 5776225,
+      "sha256": "eca4493e2cab8efe0da450b8e60936e269e0c0dcbd86faa2437ba5cbbe111a45",
+      "model_type": "CycloneDetectorNet",
+      "real_state": "UNTRAINED_RANDOM_WEIGHTS"
+    },
+    {
+      "name": "classifier.pt",
+      "path": "artifacts/checkpoints/classifier.pt",
+      "size_bytes": 1705845,
+      "sha256": "57b4c19cece7de8b2197eef2e0338628f891beda69c716dc1dc73fcedb2a4d4b",
+      "model_type": "CycloneClassifierNet",
+      "real_state": "UNTRAINED_RANDOM_WEIGHTS"
+    },
+    {
+      "name": "intensity.pt",
+      "path": "artifacts/checkpoints/intensity.pt",
+      "size_bytes": 16037,
+      "sha256": "3e088ad36ec2874d1498a59e1de7bbfc466b6f346e8a4c7121fe194532d29480",
+      "model_type": "IntensityRegressionNet",
+      "real_state": "UNTRAINED_NOT_LOADED_DURING_INFERENCE"
+    }
+  ],
+  "data_pipelines": {
+    "noaa_ibtracs": {
+      "path": "ml/data/historical/ibtracs_north_indian_ocean.csv",
+      "size_bytes": 7943,
+      "records": 114,
+      "storms": ["AMPHAN", "BIPARJOY", "MOCHA", "FANI", "TAUKTAE", "DANA"],
+      "classification": "REAL_CURATED_SUBSET"
+    },
+    "nasa_gibs": {
+      "service": "WMTS EPSG:3857 Tile Protocol",
+      "classification": "REAL_VISUALIZATION_ONLY_NO_ML_TENSORS"
+    },
+    "isro_mosdac": {
+      "service": "Download API Adapter",
+      "classification": "BLOCKED_BY_CREDENTIALS"
+    },
+    "sample_imagery": {
+      "path": "ml/data/sample_imagery/",
+      "samples": 5,
+      "classification": "SYNTHETIC_MATHEMATICAL_NUMPY_SIMULATIONS"
+    }
+  },
+  "test_and_build_status": {
+    "pytest_suite": "19_PASSED_0_FAILED",
+    "frontend_build": "VITE_PRODUCTION_BUILD_SUCCESS"
+  }
+}

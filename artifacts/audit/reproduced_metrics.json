@@ -1,0 +1,55 @@
+{
+  "audit_timestamp": "2026-10-19T21:23:00Z",
+  "evaluation_protocol": {
+    "train_storms": ["2019117N02086 (FANI)", "2021134N10072 (TAUKTAE)", "2023130N08092 (MOCHA)"],
+    "validation_storms": ["2024296N15090 (DANA)"],
+    "holdout_test_storms": ["2020136N10087 (AMPHAN)", "2023157N12066 (BIPARJOY)"],
+    "train_sample_count": 23,
+    "validation_sample_count": 5,
+    "test_sample_count": 47,
+    "leakage_status": "ZERO_LEAKAGE_STORM_SPLIT_CONFIRMED"
+  },
+  "metrics_comparison": {
+    "track_prediction_haversine_km": {
+      "claimed_in_dashboard": {
+        "baseline_extrapolation": { "6h_km": 54.2, "12h_km": 96.8, "24h_km": 182.4 },
+        "track_only_gru": { "6h_km": 42.1, "12h_km": 74.3, "24h_km": 141.5 },
+        "fused_model": { "6h_km": 36.4, "12h_km": 63.8, "24h_km": 122.9 }
+      },
+      "actually_reproduced_from_checkpoints": {
+        "baseline_extrapolation": { "6h_km": 11.6, "12h_km": 24.9, "24h_km": 58.6 },
+        "track_only_gru": { "6h_km": 68.9, "12h_km": 143.4, "24h_km": 271.8 },
+        "fused_model": { "status": "IDENTICAL_TO_GRU", "note": "fused_track simply copies gru_track coordinates" }
+      },
+      "audit_verdict": "FAILED_REPRODUCTION",
+      "discrepancy_explanation": "The reported 122.9 km (24h) and 141.5 km metrics are hardcoded literals in fusion.py and frontend components. The actual GRU checkpoint on the test set produces an average error of 271.8 km at 24h, performing worse than the 58.6 km linear extrapolation baseline due to severe underfitting on 23 training sequences."
+    },
+    "intensity_prediction_mae_kts": {
+      "claimed_in_dashboard": {
+        "fused_model_mae_kts": 7.1,
+        "persistence_mae_kts": 12.6,
+        "skill_score_pct": "+43.6%"
+      },
+      "actually_reproduced": {
+        "status": "UNVERIFIED_UNTRAINED",
+        "checkpoint_status": "RANDOM_WEIGHTS",
+        "measured_test_mae": null
+      },
+      "audit_verdict": "FAILED_REPRODUCTION",
+      "discrepancy_explanation": "IntensityPredictorService never loads intensity.pt, uses uninitialized random weights, and has no evaluation loop against test set observations. The 7.1 kts claim originates from a static dictionary."
+    },
+    "convective_structure_macro_f1": {
+      "claimed_in_dashboard": {
+        "satellite_only_f1": 0.842,
+        "fused_f1": 0.887
+      },
+      "actually_reproduced": {
+        "status": "UNVERIFIED_UNTRAINED",
+        "checkpoint_status": "RANDOM_WEIGHTS",
+        "measured_f1": null
+      },
+      "audit_verdict": "FAILED_REPRODUCTION",
+      "discrepancy_explanation": "No classification training or validation run exists. The classifier outputs ~0.21 uniform probability on all inputs. The 0.887 and 0.842 F1 numbers are hardcoded strings."
+    }
+  }
+}

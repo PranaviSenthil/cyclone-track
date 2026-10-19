@@ -1,0 +1,137 @@
+[
+  {
+    "filename": "biparjoy_20230611_mature.jpg",
+    "filepath": "C:\\Users\\prana\\Downloads\\cyclotrack\\scripts\\..\\ml\\data\\sample_imagery\\biparjoy_20230611_mature.jpg",
+    "storm_name": "BIPARJOY",
+    "observation_time": "2023-06-11T12:00:00Z",
+    "stage": "Extremely Severe Cyclonic Storm",
+    "classification_label": "Extremely Severe Cyclone",
+    "has_eye": true,
+    "center_pixel": [
+      252,
+      260
+    ],
+    "bounds": {
+      "min_lat": 16.5,
+      "max_lat": 24.5,
+      "min_lon": 60.5,
+      "max_lon": 68.5
+    },
+    "center_geo": {
+      "lat": 20.9,
+      "lon": 64.6
+    },
+    "intensity_wind_kts": 95,
+    "pressure_hpa": 955,
+    "channel": "IR_TIR1_10.8um",
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+  },
+  {
+    "filename": "mocha_20230513_super.jpg",
+    "filepath": "C:\\Users\\prana\\Downloads\\cyclotrack\\scripts\\..\\ml\\data\\sample_imagery\\mocha_20230513_super.jpg",
+    "storm_name": "MOCHA",
+    "observation_time": "2023-05-13T12:00:00Z",
+    "stage": "Super Cyclonic Storm",
+    "classification_label": "Super Cyclone",
+    "has_eye": true,
+    "center_pixel": [
+      248,
+      255
+    ],
+    "bounds": {
+      "min_lat": 15.0,
+      "max_lat": 23.0,
+      "min_lon": 87.0,
+      "max_lon": 95.0
+    },
+    "center_geo": {
+      "lat": 19.3,
+      "lon": 90.9
+    },
+    "intensity_wind_kts": 145,
+    "pressure_hpa": 910,
+    "channel": "IR_TIR1_10.8um",
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+  },
+  {
+    "filename": "dana_20241024_developing.jpg",
+    "filepath": "C:\\Users\\prana\\Downloads\\cyclotrack\\scripts\\..\\ml\\data\\sample_imagery\\dana_20241024_developing.jpg",
+    "storm_name": "DANA",
+    "observation_time": "2024-10-24T06:00:00Z",
+    "stage": "Severe Cyclonic Storm",
+    "classification_label": "Severe Cyclonic Storm",
+    "has_eye": false,
+    "center_pixel": [
+      270,
+      240
+    ],
+    "bounds": {
+      "min_lat": 15.0,
+      "max_lat": 23.0,
+      "min_lon": 83.0,
+      "max_lon": 91.0
+    },
+    "center_geo": {
+      "lat": 19.3,
+      "lon": 87.1
+    },
+    "intensity_wind_kts": 70,
+    "pressure_hpa": 972,
+    "channel": "IR_TIR1_10.8um",
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+  },
+  {
+    "filename": "amphan_20200518_super.jpg",
+    "filepath": "C:\\Users\\prana\\Downloads\\cyclotrack\\scripts\\..\\ml\\data\\sample_imagery\\amphan_20200518_super.jpg",
+    "storm_name": "AMPHAN",
+    "observation_time": "2020-05-18T06:00:00Z",
+    "stage": "Super Cyclonic Storm",
+    "classification_label": "Super Cyclone",
+    "has_eye": true,
+    "center_pixel": [
+      250,
+      250
+    ],
+    "bounds": {
+      "min_lat": 10.0,
+      "max_lat": 18.0,
+      "min_lon": 82.0,
+      "max_lon": 90.0
+    },
+    "center_geo": {
+      "lat": 14.0,
+      "lon": 86.3
+    },
+    "intensity_wind_kts": 140,
+    "pressure_hpa": 907,
+    "channel": "IR_TIR1_10.8um",
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+  },
+  {
+    "filename": "depression_disorganized.jpg",
+    "filepath": "C:\\Users\\prana\\Downloads\\cyclotrack\\scripts\\..\\ml\\data\\sample_imagery\\depression_disorganized.jpg",
+    "storm_name": "DEPRESSION_BOB_01",
+    "observation_time": "2023-11-15T00:00:00Z",
+    "stage": "Tropical Depression",
+    "classification_label": "Disorganized / Depression",
+    "has_eye": false,
+    "center_pixel": [
+      235,
+      260
+    ],
+    "bounds": {
+      "min_lat": 8.0,
+      "max_lat": 16.0,
+      "min_lon": 82.0,
+      "max_lon": 90.0
+    },
+    "center_geo": {
+      "lat": 11.5,
+      "lon": 85.8
+    },
+    "intensity_wind_kts": 30,
+    "pressure_hpa": 1002,
+    "channel": "IR_TIR1_10.8um",
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+  }
+]

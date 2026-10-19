@@ -1,0 +1,37 @@
+{
+  "providers": [
+    {
+      "provider": "NOAA NCEI IBTrACS",
+      "role": "Historical Best-Track Ground Truth",
+      "version": "v04r01",
+      "subset": "North Indian Ocean (NI)",
+      "source_url": "https://www.ncei.noaa.gov/data/international-best-track-archive-for-climate-stewardship-ibtracs/v04r01/access/csv/ibtracs.NI.list.v04r01.csv",
+      "raw_file": "ml/data/raw/ibtracs/ibtracs.NI.list.v04r01.csv",
+      "processed_clean": "ml/data/processed/ibtracs/ibtracs_ni_modern.csv",
+      "sha256": "b30984b56c428391eff17a44d1a9662e444fc4ba419417e9613c18db07424155",
+      "state": "HISTORICAL",
+      "provenance_type": "AUTHENTIC_GOVERNMENT_OBSERVATIONS",
+      "observation_count": 18177,
+      "cyclone_count": 466
+    },
+    {
+      "provider": "NASA GIBS (Earthdata)",
+      "role": "Interactive Map WMS/WMTS Visual Layer",
+      "protocol": "WMTS EPSG:3857 Tile Service",
+      "base_url": "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best",
+      "state": "LIVE",
+      "ml_tensor_input_status": "VISUALIZATION_ONLY_NO_ML_TENSORS",
+      "notes": "Browser-rendered raster tiles. Not used directly as PyTorch input tensors."
+    },
+    {
+      "provider": "ISRO MOSDAC (INSAT-3D/3DR)",
+      "role": "Indian Geostationary Meteorological Imagery Provider",
+      "protocol": "MOSDAC OpenData Download API",
+      "base_url": "https://mosdac.gov.in/live/",
+      "state": "UNAVAILABLE",
+      "auth_requirement": "MOSDAC_API_KEY environment variable required",
+      "notes": "Authenticated access required. Gracefully reports UNAVAILABLE without secrets."
+    }
+  ],
+  "generated_at": "2026-10-19T18:02:57.241161Z"
+}
