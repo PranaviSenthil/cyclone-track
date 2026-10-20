@@ -11,9 +11,11 @@ import datetime
 from typing import Dict, List, Optional
 import requests
 
+from backend.app.services.satellite.base_provider import BaseSatelliteProvider, SatelliteMetadata
+
 logger = logging.getLogger("MOSDAC_INSAT")
 
-class MOSDACAdapter:
+class MOSDACAdapter(BaseSatelliteProvider):
     """
     Adapter for INSAT-3D/3DR observations from MOSDAC.
     Supports authenticated API access, metadata querying, product catalogs, and local caching.
@@ -52,13 +54,12 @@ class MOSDACAdapter:
     ]
 
     def __init__(self, api_key: Optional[str] = None, user_email: Optional[str] = None, cache_dir: Optional[str] = None):
+        if cache_dir is None:
+            cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "cache", "mosdac")
+        super().__init__(provider_name="ISRO MOSDAC (INSAT-3D/3DR)", cache_dir=cache_dir)
         self.api_key = api_key or os.getenv("MOSDAC_API_KEY", "")
         self.user_email = user_email or os.getenv("MOSDAC_USER_EMAIL", "")
         self.base_url = os.getenv("MOSDAC_API_BASE_URL", "https://mosdac.gov.in/live/")
-        if cache_dir is None:
-            cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), "cache", "mosdac")
-        self.cache_dir = cache_dir
-        os.makedirs(self.cache_dir, exist_ok=True)
 
     def get_supported_products(self) -> List[Dict]:
         return self.PRODUCTS
@@ -127,3 +128,32 @@ class MOSDACAdapter:
             return {"success": False, "http_status": resp.status_code, "error": resp.text}
         except Exception as e:
             return {"success": False, "error": str(e)}
+
+    def discover_metadata(
+        self,
+        start_time: str,
+        end_time: str,
+        bounds: Optional[Dict[str, float]] = None
+    ) -> List[Dict]:
+        """Queries product metadata within time/spatial window."""
+        date_str = start_time.split("T")[0] if "T" in start_time else start_time
+        res = self.fetch_product_metadata("3R_IMG_L1B_STD", date_str)
+        if res.get("success") and "data" in res:
+            return res["data"] if isinstance(res["data"], list) else [res["data"]]
+        return []
+
+    def retrieve_product(self, product_id: str, output_path: Optional[str] = None) -> Dict:
+        """Retrieves raw data product if authorized. Otherwise returns CREDENTIALS_REQUIRED."""
+        if not self.api_key:
+            return {
+                "success": False,
+                "status": "CREDENTIALS_REQUIRED",
+                "product_id": product_id,
+                "message": "MOSDAC credentials required (MOSDAC_API_KEY). Automated download restricted."
+            }
+        return {
+            "success": False,
+            "status": "NOT_IMPLEMENTED_REMOTE_ENDPOINT",
+            "message": "Direct download endpoint connection awaiting verified user token."
+        }
+

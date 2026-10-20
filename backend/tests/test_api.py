@@ -108,3 +108,47 @@ def test_demo_alert_dispatch():
     data = response.json()
     assert data["status"] == "DEMONSTRATION_DISPATCHED"
     assert "RESEARCH & HACKATHON DEMO" in data["official_disclaimer"]
+
+def test_risk_sectors_endpoint():
+    response = sync_request("GET", "/api/risk/sectors")
+    assert response.status_code == 200
+    data = response.json()
+    assert "sectors" in data
+    assert data["total_sectors"] >= 5
+    sector_names = [s["name"] for s in data["sectors"]]
+    assert any("Paradip" in s or "Puri" in s for s in sector_names)
+    assert any("Porbandar" in s or "Dwarka" in s for s in sector_names)
+
+def test_risk_assess_with_storm_id():
+    payload = {"storm_id": "2023156N10067"} # BIPARJOY
+    response = sync_request("POST", "/api/risk/assess", json_data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert "most_exposed_sector" in data
+    assert "storm_intensity_classification" in data
+    assert data["uncertainty_calibrated"] is True
+    assert "PROTOTYPE RESEARCH ALERT" in data["disclaimer"]
+
+def test_risk_assess_custom_location():
+    payload = {
+        "storm_id": "2023156N10067",
+        "custom_lat": 22.5,
+        "custom_lon": 69.5,
+        "custom_location_name": "Jamnagar Coastal Terminal"
+    }
+    response = sync_request("POST", "/api/risk/assess", json_data=payload)
+    assert response.status_code == 200
+    data = response.json()
+    sector_names = [s["sector_name"] for s in data["sectors_assessed"]]
+    assert "Jamnagar Coastal Terminal" in sector_names
+
+def test_fusion_ablation_endpoint():
+    response = sync_request("POST", "/api/fusion/evaluate")
+    assert response.status_code == 200
+    data = response.json()
+    assert "configurations" in data
+    assert len(data["configurations"]) == 4
+    config_names = [c["name"] for c in data["configurations"]]
+    assert "Historical Motion Baseline" in config_names
+    assert "Historical-Track Neural Model (GRU)" in config_names
+

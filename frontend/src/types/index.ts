@@ -180,10 +180,44 @@ export type ModelStatusType =
   | 'UNTRAINED' 
   | 'TRAINED_NOT_VALIDATED' 
   | 'VALIDATED_ON_HOLDOUT' 
+  | 'TRAINED_EVALUATED'
+  | 'CALIBRATED_EMPIRICAL_QUANTILES'
+  | 'DEMO_ONLY_SAMPLE_PAIRED'
   | 'DEMO_ONLY' 
   | 'ERROR' 
   | 'UNAVAILABLE'
   | 'VALIDATED';
+
+export interface CoastalSector {
+  name: string;
+  state: string;
+  lat: number;
+  lon: number;
+  zone: string;
+}
+
+export interface SectorRiskAssessment {
+  sector_name: string;
+  state: string;
+  coordinates: { lat: number; lon: number };
+  minimum_distance_km: number;
+  time_to_closest_approach_hours: number;
+  proximity_level: 'CRITICAL_PROXIMITY' | 'HIGH_PROXIMITY' | 'MODERATE_PROXIMITY' | 'LOW_PROXIMITY';
+  advisory: string;
+  closest_predicted_coords: { lat: number | null; lon: number | null };
+}
+
+export interface RiskAssessmentResult {
+  assessment_timestamp: string;
+  forecast_horizons_checked: number[];
+  storm_intensity_classification: { category: string; code: string; severity: string };
+  most_exposed_sector: SectorRiskAssessment | null;
+  sectors_assessed: SectorRiskAssessment[];
+  methodology: string;
+  uncertainty_calibrated: boolean;
+  disclaimer: string;
+}
+
 
 export interface ModelInfo {
   id: string;

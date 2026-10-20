@@ -1,0 +1,57 @@
+{
+  "validation_timestamp": "2026-10-20T04:15:00Z",
+  "case_studies": {
+    "AMPHAN_WestBengal_Landfall": {
+      "intensity_class": {
+        "category": "Super Cyclonic Storm",
+        "code": "SuCS",
+        "severity": "CATASTROPHIC"
+      },
+      "most_exposed_sector": {
+        "sector_name": "Kolkata / Sundarbans",
+        "state": "West Bengal",
+        "coordinates": {
+          "lat": 22.0,
+          "lon": 88.5
+        },
+        "minimum_distance_km": 30.3,
+        "time_to_closest_approach_hours": 24,
+        "proximity_level": "CRITICAL_PROXIMITY",
+        "advisory": "Immediate coastal warning: cyclone center trajectory passes within high-wind radius.",
+        "closest_predicted_coords": {
+          "lat": 21.8,
+          "lon": 88.3
+        }
+      },
+      "expected_sector": "Kolkata / Sundarbans",
+      "matches_ground_truth": true
+    },
+    "BIPARJOY_Gujarat_Landfall": {
+      "intensity_class": {
+        "category": "Extremely Severe Cyclonic Storm",
+        "code": "ESCS",
+        "severity": "DEVASTATING"
+      },
+      "most_exposed_sector": {
+        "sector_name": "Porbandar / Dwarka",
+        "state": "Gujarat",
+        "coordinates": {
+          "lat": 21.64,
+          "lon": 69.6
+        },
+        "minimum_distance_km": 158.8,
+        "time_to_closest_approach_hours": 24,
+        "proximity_level": "MODERATE_PROXIMITY",
+        "advisory": "Watch alert: peripheral squalls and rough sea conditions expected.",
+        "closest_predicted_coords": {
+          "lat": 22.8,
+          "lon": 68.7
+        }
+      },
+      "expected_sector": "Porbandar / Dwarka",
+      "matches_ground_truth": true
+    }
+  },
+  "status": "RULE_BASED_RISK_LOGIC_VALIDATED",
+  "disclaimer_verified": true
+}

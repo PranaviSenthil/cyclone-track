@@ -83,7 +83,7 @@ export const api = {
 
   getModelsMetrics: () => request<EvaluationMetricsResponse>('/models/metrics'),
 
-  dispatchDemoAlert: (params: {
+    dispatchDemoAlert: (params: {
     stormName: string;
     estimatedLandfallTime: string;
     landfallDistrict: string;
@@ -99,5 +99,29 @@ export const api = {
         max_sustained_wind_kmh: params.maxSustainedWindKmh,
         warning_level: params.warningLevel
       })
+    }),
+
+  getMonitoredSectors: () =>
+    request<{ total_sectors: number; sectors: any[]; basin: string }>('/risk/sectors'),
+
+  assessRisk: (params: {
+    stormId?: string;
+    forecastWaypoints?: any[];
+    currentWindKts?: number;
+    customLat?: number;
+    customLon?: number;
+    customLocationName?: string;
+  }) =>
+    request<any>('/risk/assess', {
+      method: 'POST',
+      body: JSON.stringify({
+        storm_id: params.stormId,
+        forecast_waypoints: params.forecastWaypoints,
+        current_wind_kts: params.currentWindKts,
+        custom_lat: params.customLat,
+        custom_lon: params.customLon,
+        custom_location_name: params.customLocationName
+      })
     })
 };
+

@@ -32,7 +32,7 @@ class CycloneGRUTrackNet(nn.Module):
         self.head_12h = nn.Linear(64, 2)
         self.head_24h = nn.Linear(64, 2)
 
-    def forward(self, x):
+    def forward(self, x, curr_pos=None):
         # x: [batch, seq_len, 6]
         gru_out, _ = self.gru(x)
         # Take the final sequence embedding
@@ -45,16 +45,30 @@ class CycloneGRUTrackNet(nn.Module):
         
         displacements = torch.cat([d_6h, d_12h, d_24h], dim=1) # [batch, 3, 2]
         # Current position is lat, lon at index 0, 1 of last timestep
-        curr_pos = x[:, -1, :2].unsqueeze(1) # [batch, 1, 2]
+        if curr_pos is None:
+            curr_pos = x[:, -1, :2].unsqueeze(1) # [batch, 1, 2]
+        elif curr_pos.dim() == 2:
+            curr_pos = curr_pos.unsqueeze(1)
         predicted_coords = curr_pos + displacements
         return predicted_coords
 
 class CycloneTrackService:
     def __init__(self, checkpoint_path: Optional[str] = None):
+        import json
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model = CycloneGRUTrackNet().to(self.device)
         self.horizons = [6, 12, 24] # Lead time in hours
         self.is_trained = False
+        self.scaler = None
+
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        scaler_file = os.path.join(base_dir, "artifacts", "checkpoints", "track_scaler.json")
+        if os.path.exists(scaler_file):
+            try:
+                with open(scaler_file, "r") as f:
+                    self.scaler = json.load(f)
+            except Exception:
+                self.scaler = None
         
         if checkpoint_path and os.path.exists(checkpoint_path):
             try:
@@ -123,10 +137,17 @@ class CycloneTrackService:
         while len(features) < 4:
             features.insert(0, features[0])
 
-        inp_tensor = torch.tensor([features], dtype=torch.float32).to(self.device)
+        curr_pos = torch.tensor([[features[-1][0], features[-1][1]]], dtype=torch.float32).to(self.device)
+        feat_arr = np.array(features, dtype=np.float32)
+        if self.scaler and "means" in self.scaler and "stds" in self.scaler:
+            means = np.array(self.scaler["means"], dtype=np.float32)
+            stds = np.array(self.scaler["stds"], dtype=np.float32)
+            feat_arr = (feat_arr - means) / stds
+
+        inp_tensor = torch.tensor([feat_arr], dtype=torch.float32).to(self.device)
 
         with torch.no_grad():
-            pred_coords = self.model(inp_tensor)[0].cpu().numpy()
+            pred_coords = self.model(inp_tensor, curr_pos=curr_pos)[0].cpu().numpy()
 
         results = []
         for i, h in enumerate(self.horizons):

@@ -47,13 +47,17 @@ export const ModelReadinessSection: React.FC<ModelReadinessProps> = ({ modelStat
         {models.map((m) => {
           const getStatusBadge = (status: string) => {
             switch (status) {
+              case 'TRAINED_EVALUATED':
               case 'VALIDATED_ON_HOLDOUT':
               case 'VALIDATED':
                 return 'bg-emerald-950 text-emerald-400 border-emerald-500/40';
+              case 'CALIBRATED_EMPIRICAL_QUANTILES':
+                return 'bg-indigo-950 text-indigo-300 border-indigo-500/40';
               case 'TRAINED_NOT_VALIDATED':
                 return 'bg-amber-950 text-amber-300 border-amber-500/40';
               case 'UNTRAINED':
                 return 'bg-rose-950/70 text-rose-300 border-rose-500/40';
+              case 'DEMO_ONLY_SAMPLE_PAIRED':
               case 'DEMO_ONLY':
                 return 'bg-cyan-950/70 text-cyan-300 border-cyan-500/40';
               default:

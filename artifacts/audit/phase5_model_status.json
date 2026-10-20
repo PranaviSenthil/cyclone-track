@@ -1,0 +1,55 @@
+{
+  "audit_timestamp": "2026-10-20T03:48:30.000000+00:00",
+  "phase": "PHASE_5_GENUINE_MULTIMODAL_FUSION_AND_MODEL_VALIDATION",
+  "models": [
+    {
+      "model_id": "model_a_detector",
+      "model_name": "Model A: Cyclone Detection & Localization Net",
+      "status": "UNTRAINED",
+      "verdict": "DEMO_ONLY_SAMPLE_BENCHMARKS",
+      "reason": "Requires full multispectral INSAT-3D/3DR Level-1B imagery archive currently restricted by MOSDAC credentials."
+    },
+    {
+      "model_id": "model_b_classifier",
+      "model_name": "Model B: Cyclone Structure Classifier",
+      "status": "UNTRAINED",
+      "verdict": "DEMO_ONLY_SAMPLE_BENCHMARKS",
+      "reason": "Requires thousands of labeled satellite images for robust multi-class generalization across tropical cyclone intensity stages."
+    },
+    {
+      "model_id": "model_c_track_gru",
+      "model_name": "Model C: Cyclone Track Predictor (CycloneGRUTrackNet)",
+      "status": "TRAINED_EVALUATED",
+      "verdict": "GENUINELY_EVALUATED_ON_HOLDOUT",
+      "checkpoint": "artifacts/checkpoints/track_gru.pt",
+      "evaluation_split": "70 held-out NIO cyclones (1,918 sequences)",
+      "results_24h_mean_km": 148.28,
+      "skill_score_vs_linear_24h": "+9.17%",
+      "skill_score_vs_persistence_24h": "+54.65%"
+    },
+    {
+      "model_id": "model_d_intensity",
+      "model_name": "Model D: Cyclone Intensity Predictor (IntensityRegressionNet)",
+      "status": "TRAINED_EVALUATED",
+      "verdict": "GENUINELY_EVALUATED_ON_HOLDOUT",
+      "checkpoint": "artifacts/checkpoints/intensity.pt",
+      "evaluation_split": "70 held-out NIO cyclones (1,918 sequences)",
+      "results_24h_mae_kts": 8.73,
+      "skill_score_vs_persistence_24h": "+6.29%"
+    },
+    {
+      "model_id": "model_e_uncertainty",
+      "model_name": "Model E: Forecast Uncertainty Engine",
+      "status": "PENDING_PHASE_6_CALIBRATION",
+      "verdict": "TRANSITIONING_TO_CONFORMAL_QUANTILES",
+      "note": "Phase 6 will calibrate empirical quantiles on 2,027 validation sequences."
+    },
+    {
+      "model_id": "model_f_fusion",
+      "model_name": "Model F: Multi-Source Fusion Pipeline",
+      "status": "DEMO_ONLY_SAMPLE_PAIRED",
+      "verdict": "NOT_VALIDATED_ACROSS_FULL_TEST_SPLIT",
+      "reason": "Evaluated on 5 paired sample benchmark scenes; full archive restricted by MOSDAC credentials."
+    }
+  ]
+}

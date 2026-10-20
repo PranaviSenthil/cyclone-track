@@ -1,0 +1,718 @@
+<USER_REQUEST>
+# CYCLOTRACK — MASTER IMPLEMENTATION PROMPT: PHASES 3–7
+
+## Project identity
+
+**Project:** CYCLOTRACK — AI-Driven Digital Twin for Multi-Source Tropical Cyclone Pattern Analysis & Prediction
+
+**SIH Problem Statement:** SIH26070  
+**Team:** MISSION_POSSIBLE  
+**Project Directory:** `C:\Users\prana\Downloads\cyclotrack`
+
+**Current state:**
+- Phase 0: Initial audit completed according to the existing report.
+- Phase 1: Honesty corrections and model-status reporting implemented according to the existing report.
+- Phase 2: NOAA IBTrACS historical data pipeline and storm-level manifests implemented according to the existing report.
+- Phase 3–7: Must now be implemented and validated against the actual repository.
+
+The reports above are claims from earlier implementation runs. Independently inspect the actual files and reproduce important checks before relying on them.
+
+## YOUR ROLE
+
+Act as a senior machine-learning engineer, meteorological data scientist, satellite-data engineer, backend engineer, frontend engineer, and software QA engineer.
+
+Continue the existing repository. Do not create a new project, replace the existing dashboard, or redesign the entire application unnecessarily.
+
+Implement Phases 3, 4, 5, 6, and 7 sequentially. Work directly in the existing project using the available local environment. Inspect the code, implement the functionality, execute commands, run tests, and create the documentation and artifacts described below.
+
+**Do not merely generate a plan or write placeholder files. Implement and verify what is feasible in the actual environment.**
+
+If you cannot access the project directory or execute a required operation, report the blocker honestly. Never claim that local files were changed, models trained, satellite data downloaded, or tests passed unless you actually performed and verified those actions.
+
+# GLOBAL NON-NEGOTIABLE RULES
+
+1. Preserve the existing React dashboard, FastAPI backend, API contracts, navigation, map, styling, historical cyclone display, and working features.
+2. Inspect the existing architecture before editing. Prefer extending existing modules over duplicating them.
+3. Never hardcode model metrics, probabilities, track predictions, wind predictions, uncertainty values, or ablation results.
+4. Never describe random weights, synthetic arrays, or demo predictions as trained-model outputs.
+5. Never use test storms for training, feature selection, normalization, hyperparameter tuning, calibration, or other model-selection decisions.
+6. Never allow future observations to leak into a forecast made at an earlier time.
+7. Never silently modify the Phase 2 storm manifests to improve results.
+8. Back up existing checkpoints and evaluation artifacts before replacing anything.
+9. Do not install large dependencies or download large datasets without first inspecting the current environment, available disk space, and whether the dependency or data is necessary.
+10. Use CPU-feasible defaults. The previously reported environment is CPU-only with approximately 15 GB RAM; verify the actual environment before selecting configurations.
+11. Do not use NASA GIBS browser tiles as if they were calibrated scientific satellite rasters.
+12. Do not fabricate MOSDAC credentials or bypass provider access controls.
+13. Do not falsely label the system as operational, real-time, scientifically validated, or deployment-ready.
+14. Keep historical observations, live map layers, model predictions, and demonstrations clearly distinguishable in the UI.
+15. If a modality or data source is unavailable, implement the supported parts and report the missing dependency. Never simulate successful real-data integration.
+16. Every model must have an explicit status backed by evidence.
+17. Preserve user changes and do not discard unrelated uncommitted work.
+18. Use reproducible random seeds, recorded configurations, dataset hashes, manifest hashes, and saved evaluation predictions.
+19. Use clear error messages and graceful fallback behavior. A fallback must not silently masquerade as genuine inference.
+20. Execute the phases in order. Finish and validate each phase before moving to the next.
+21. Do not ask me for approval after every phase. Continue automatically when prerequisites pass, while respecting the safety and stopping conditions below.
+22. Do not begin a new unrelated project or add unrelated features.
+
+# STAGE 0 — INVENTORY, SAFETY, AND PHASE 2 REVALIDATION
+
+Before starting Phase 3:
+
+1. Verify the actual repository root.
+2. Inspect the Phase 0–2 reports, implementation roadmap, data pipeline documentation, parser, manifests, models, backend services, frontend, and tests.
+3. Record Git status and all pre-existing modifications.
+4. Record relevant Python, PyTorch, NumPy, pandas, and frontend dependency versions.
+5. Record available RAM, disk space, CPU, and CUDA availability.
+6. Hash existing checkpoints and evaluation artifacts.
+7. Create non-destructive backups for artifacts that may be replaced.
+
+Verify the actual files:
+
+- `ml/data/raw/ibtracs/ibtracs.NI.list.v04r01.csv`
+- `ml/data/processed/ibtracs/ibtracs_ni_modern.csv`
+- `ml/data/manifests/train_storms.json`
+- `ml/data/manifests/val_storms.json`
+- `ml/data/manifests/test_storms.json`
+
+Check the raw checksum, processed dataset counts, missingness, timestamps, storm IDs, and manifest integrity.
+
+Recalculate the Phase 2 split percentages from actual observation counts. The previous report's percentages appear inconsistent with its stated counts. Correct the documentation using actual calculations without silently changing valid split membership.
+
+Verify that train, validation, and test storm IDs are disjoint.
+
+Preserve these designated holdout storms in the test manifest:
+
+- AMPHAN: `2020136N10088`
+- BIPARJOY: `2023156N10067`
+
+Check the reported validation holdouts against the actual manifests.
+
+**Stop model training if the dataset or split integrity audit fails.** Create an audit report explaining the issue instead of silently regenerating the splits.
+
+Create or update:
+
+- `artifacts/audit/master_phase3_7_initial_inventory.json`
+- `artifacts/audit/master_phase3_7_data_integrity.json`
+
+Proceed only when critical data checks pass.
+
+---
+
+# PHASE 3 — REAL MODEL TRAINING AND SCIENTIFIC EVALUATION
+
+## 3.1 Define the actual forecasting problem
+
+The primary task is cyclone-track forecasting from observations available at the forecast issue time.
+
+Predict future cyclone positions at 24, 48, and 72 hours. Add a 12-hour horizon only if the dataset and evaluation pipeline support it.
+
+Inspect the existing track GRU and preprocessing code. Reuse the existing architecture where reasonable.
+
+Do not assume the existing checkpoint is valid merely because it loads.
+
+## 3.2 Build leakage-safe sequences
+
+Implement or repair sequence preparation with these rules:
+
+- Sort observations by storm ID and timestamp.
+- Keep all sequences within their respective storm.
+- Use only past information to form input windows.
+- Do not use future track, wind, pressure, or final-track information as input.
+- Fit scalers and preprocessing only on training storms.
+- Apply the same fitted transformations to validation and test data.
+- Handle missing observations explicitly.
+- Detect irregular temporal gaps.
+- Do not interpolate across large gaps without a documented rule.
+- Preserve a distinction between observed and interpolated values.
+- Record sequence counts and rejection reasons.
+- Verify the input timestamps precede the forecast issue time and target timestamps follow it.
+
+Do not assume every observation can be safely resampled to a 3-hour grid.
+
+## 3.3 Establish baselines first
+
+Implement at least:
+
+1. Persistence baseline: future position equals the latest observed position.
+2. Constant-motion baseline: extrapolate recent motion using only past positions and elapsed time.
+3. A historical or climatological baseline only if it can be constructed without leakage and is scientifically defensible.
+
+Evaluate baselines and trained models on exactly the same eligible test sequences.
+
+Use correct geodesic distance calculations for track errors. Clearly document any approximation.
+
+## 3.4 Train the track model
+
+Use the verified training storm manifest only.
+
+Requirements:
+
+- Compact CPU-feasible model configuration.
+- Reproducible seeds.
+- Training-only preprocessing.
+- Validation-based hyperparameter selection.
+- Early stopping.
+- Best-validation-checkpoint saving.
+- Training and validation loss histories.
+- NaN/Inf detection.
+- Documented units and feature definitions.
+- Model configuration and checkpoint hashes.
+
+Save predictions separately from evaluation summaries.
+
+Do not tune against the test set.
+
+## 3.5 Evaluate track prediction honestly
+
+Calculate genuine metrics at each forecast horizon:
+
+- Mean geodesic track error in kilometres.
+- Median geodesic error.
+- 90th-percentile geodesic error.
+- Number of evaluated sequences.
+- Number of unique evaluated storms.
+- Per-storm metrics.
+- Results for AMPHAN and BIPARJOY where valid data supports the requested horizon.
+
+Compare the model with each baseline on identical cases.
+
+Report absolute error and relative improvement or degradation. If the neural network performs worse than a baseline, report it clearly.
+
+Do not remove difficult storms or change metric definitions after inspecting the test results.
+
+## 3.6 Intensity prediction
+
+Audit the existing intensity model and its targets.
+
+Determine whether the supported task is future wind prediction, future pressure prediction, or another clearly defined task.
+
+Train an intensity model only if enough valid labels exist and the task can be formulated without leakage.
+
+Report MAE, RMSE, target units, valid-label counts, storm counts, and baseline comparisons.
+
+If data is insufficient, preserve the model as untrained and document the reason.
+
+## 3.7 Checkpoint and reproducibility requirements
+
+Each genuinely trained model must have:
+
+- Weights and architecture configuration.
+- Feature schema and feature order.
+- Preprocessing parameters fitted on training data.
+- Target definitions and units.
+- Dataset and split-manifest hashes.
+- Random seed and hyperparameters.
+- Best epoch and stopping reason.
+- Dependency versions and training time.
+- Training history.
+- Checkpoint checksum.
+- Evaluation predictions and status.
+
+Load the saved checkpoint into a fresh model instance and verify reproducibility.
+
+Create:
+
+- `docs/PHASE3_COMPLETION_REPORT.md`
+- `docs/MODEL_TRAINING_AND_EVALUATION.md`
+- `artifacts/audit/phase3_training_config.json`
+- `artifacts/audit/phase3_evaluation_results.json`
+- `artifacts/audit/phase3_model_status.json`
+- Appropriate baseline prediction and metric artifacts.
+
+Do not proceed with a model if the core training or evaluation pipeline is invalid. Other independent phases may continue when safe.
+
+---
+
+# PHASE 4 — REAL SATELLITE IMAGERY INGESTION AND PREPROCESSING
+
+## 4.1 Inspect existing satellite integrations
+
+Audit:
+
+- Existing NASA GIBS integration.
+- Existing satellite services and adapters.
+- Existing MOSDAC adapter.
+- Existing map tile layers.
+- Existing model input contracts.
+- Available authentication and configuration mechanisms.
+
+Preserve the existing Leaflet map and GIBS visualization.
+
+Clearly distinguish:
+
+A. IBTrACS historical track observations.
+
+B. NASA GIBS browser-rendered visualization tiles.
+
+C. Calibrated scientific satellite observations suitable for machine learning.
+
+Do not treat these as interchangeable data sources.
+
+## 4.2 Identify an accessible scientific imagery source
+
+Investigate whether a legitimate, documented data access route is available for INSAT-3D/3DR or another suitable geostationary satellite product.
+
+Prefer a source that supports the North Indian Ocean and provides the metadata required to map imagery to cyclone observations.
+
+Inspect actual access requirements before implementing the adapter.
+
+For MOSDAC:
+
+- Inspect the existing adapter and documented API.
+- Use only supported and authorized access methods.
+- Read credentials from environment variables or an appropriate secrets mechanism.
+- Never log credential values.
+- Do not assume credentials are available merely because configuration variables exist.
+- If access requires registration or credentials that are not present, report the precise blocker.
+
+Do not scrape protected endpoints or bypass authentication.
+
+## 4.3 Implement a genuine ingestion interface
+
+Implement a modular provider interface appropriate to the repository, with clearly separated responsibilities for:
+
+- Provider configuration.
+- Metadata discovery.
+- Authorized data retrieval.
+- File validation.
+- Metadata parsing.
+- Spatial and temporal matching.
+- Preprocessing.
+- Provenance recording.
+- Error and unavailable-source reporting.
+
+Only implement actual provider requests when the endpoint and access method are verified.
+
+If no authenticated imagery source is available, implement the reusable interface, validation code, documented configuration, and tests. Do not claim that real imagery was downloaded or that the image pipeline is operational.
+
+## 4.4 Scientific image preprocessing
+
+Where real source files are available and their metadata supports the operations, implement a preprocessing pipeline that can:
+
+- Read the actual source format and metadata.
+- Preserve geospatial projection and coordinate information.
+- Identify channel names, units, calibration metadata, and acquisition time.
+- Convert radiometric measurements only when supported by the product's documented calibration.
+- Crop a configurable geographic region around an IBTrACS fix.
+- Match imagery to track fixes within a configurable time tolerance.
+- Handle missing channels and invalid pixels.
+- Preserve the distinction between observed pixels and any resampled pixels.
+- Record source IDs, acquisition timestamps, spatial bounds, preprocessing settings, and checksums.
+
+Do not assume every product uses the same file format, projection, channel names, or calibration formula.
+
+Do not apply brightness-temperature conversion without verifying the product-specific calibration and units.
+
+Do not download large image archives automatically. Start with a small authorized sample only if one is available and the operation is reasonable.
+
+## 4.5 Image-label alignment and splits
+
+Associate satellite samples with track observations only through a reproducible matching procedure.
+
+Ensure that samples from the same cyclone cannot leak between train, validation, and test.
+
+Do not label an image with a future observation or a label unavailable at the image acquisition time.
+
+Create a metadata manifest with:
+
+- Image/sample ID.
+- Provider and product.
+- Acquisition time.
+- Geographic extent.
+- Channel information.
+- Associated storm ID.
+- Associated track-fix time.
+- Matching time difference.
+- File checksum.
+- Processing status.
+- Split assignment.
+
+Create:
+
+- `docs/PHASE4_SATELLITE_DATA_REPORT.md`
+- `docs/SATELLITE_INGESTION.md`
+- `artifacts/audit/phase4_satellite_status.json`
+- An image metadata manifest when genuine imagery is available.
+
+The satellite status must explicitly distinguish `OPERATIONAL`, `PARTIALLY_AVAILABLE`, `CREDENTIALS_REQUIRED`, and `UNAVAILABLE`, or equivalent accurate statuses.
+
+**Important:** Building an ingestion interface is not the same as validating a satellite-trained model.
+
+---
+
+# PHASE 5 — GENUINE MULTIMODAL FUSION AND MODEL VALIDATION
+
+## 5.1 Audit available modalities
+
+Inventory the actual inputs available for each storm:
+
+- Historical track sequences.
+- Valid intensity observations.
+- Genuine scientific satellite imagery, if available.
+- Any other real data source already integrated and legally accessible.
+
+Do not count a GIBS display tile as a calibrated scientific image tensor.
+
+Do not count duplicated track outputs as independent modalities.
+
+## 5.2 Implement fusion only when inputs are genuine
+
+If a valid image dataset and aligned track sequences are available, implement a compact fusion architecture that uses distinct, documented feature inputs.
+
+Potential design:
+
+- A temporal encoder for historical track features.
+- An image encoder for actual calibrated satellite tensors.
+- A fusion layer combining the two representations.
+- Forecast heads for supported future track or intensity targets.
+
+Choose the architecture based on the real dataset size and data format.
+
+Do not build an unnecessarily complex network.
+
+If real imagery is unavailable, do not fabricate it. Keep fusion explicitly marked `NOT_VALIDATED_NO_SECOND_MODALITY` or the most accurate equivalent. Complete the remaining independent validation work.
+
+## 5.3 Compare fusion against individual models
+
+Use the same eligible evaluation storms and forecasting horizons for:
+
+- Track-only model.
+- Image-only model, if independently trainable.
+- Fusion model, if genuine paired inputs exist.
+- Strongest applicable simple baseline.
+
+Perform ablations only when the ablated models and inputs are real.
+
+Calculate actual metrics from saved predictions.
+
+Report whether fusion improves or degrades performance and discuss uncertainty in the comparison.
+
+Do not claim an improvement when models were evaluated on different test samples.
+
+## 5.4 Test generalization
+
+Inspect performance by storm, forecast horizon, available input modalities, and data completeness.
+
+Investigate whether a few storms dominate aggregate metrics.
+
+Do not tune on test performance.
+
+Create:
+
+- `docs/PHASE5_FUSION_REPORT.md`
+- `docs/MULTIMODAL_MODEL_DESIGN.md`
+- `artifacts/audit/phase5_fusion_results.json`
+- `artifacts/audit/phase5_model_status.json`
+
+If fusion cannot be scientifically trained, report the exact missing data or prerequisite and leave the model unvalidated.
+
+---
+
+# PHASE 6 — UNCERTAINTY ESTIMATION AND DISASTER-RISK ANALYSIS
+
+## 6.1 Prediction uncertainty
+
+Audit the existing uncertainty implementation. Fixed circles or manually chosen radii must not be described as calibrated prediction uncertainty.
+
+If a valid track model and sufficient validation data exist:
+
+- Use validation storms to estimate empirical residual distributions or suitable prediction intervals.
+- Select and document the calibration method before inspecting test coverage.
+- Do not calibrate using test data.
+- Evaluate empirical interval coverage and interval width on untouched test storms.
+- Report the number of storms and predictions used.
+- Document sample-size limitations and whether uncertainty varies by forecast horizon.
+
+Do not claim a specific confidence level unless the observed coverage supports it.
+
+If the data is insufficient, mark uncertainty as uncalibrated and display an honest status.
+
+## 6.2 Define disaster risk carefully
+
+Track prediction and disaster risk are different tasks.
+
+First determine which risk indicators the actual data can support.
+
+Possible outputs include:
+
+- Predicted cyclone proximity to a specified geographic point or region.
+- Forecast track distance from that region.
+- Estimated time to closest approach, when supported by the forecast.
+- Track prediction uncertainty.
+- Observed or forecast intensity, clearly labelled.
+- A transparent, rule-based exposure indicator if geographic exposure data is available.
+
+Do not claim flood, storm-surge, rainfall, or wind-damage predictions without the relevant data and a validated model.
+
+Do not invent population, infrastructure, elevation, rainfall, surge, or vulnerability data.
+
+## 6.3 Risk calculations and communication
+
+Implement only calculations that can be supported by actual inputs.
+
+Use clear units, time references, geographic assumptions, and documented thresholds.
+
+If a user supplies a location or region, distinguish proximity calculations from a formal hazard forecast.
+
+Display uncertainty and data-source limitations alongside risk results.
+
+Do not present prototype risk indicators as official warnings or substitutes for meteorological authorities.
+
+Create:
+
+- `docs/PHASE6_UNCERTAINTY_AND_RISK_REPORT.md`
+- `docs/RISK_METHODOLOGY.md`
+- `artifacts/audit/phase6_uncertainty_results.json`
+- `artifacts/audit/phase6_risk_validation.json`
+
+---
+
+# PHASE 7 — BACKEND, FRONTEND, AND END-TO-END INTEGRATION
+
+## 7.1 Inspect the existing application first
+
+Inspect the FastAPI routes, services, schemas, React components, TypeScript types, data-fetching code, map components, status badges, and dashboard layout.
+
+Preserve the existing visual design and working features.
+
+Do not rebuild the UI from scratch.
+
+## 7.2 Backend integration
+
+Connect only genuinely implemented and supported model services.
+
+The API must:
+
+- Load validated checkpoints.
+- Validate input schemas and units.
+- Return real model outputs.
+- Include the forecast issue time and forecast horizons.
+- Distinguish observed tracks from predicted tracks.
+- Return uncertainty only when it is computed by a supported method.
+- Return honest model and data-source statuses.
+- Report missing modalities explicitly.
+- Handle invalid input and unavailable checkpoints gracefully.
+- Preserve backward compatibility wherever practical.
+- Avoid returning random or hardcoded predictions as fallbacks.
+- Avoid exposing filesystem paths or secrets unnecessarily.
+
+Maintain separation between:
+
+- Historical data endpoints.
+- Forecast inference endpoints.
+- Model evaluation endpoints.
+- Satellite-source status endpoints.
+- Risk-analysis endpoints.
+
+Reuse existing endpoints if they already provide equivalent functionality. Do not create redundant routes without need.
+
+## 7.3 Frontend integration
+
+Preserve the current CYCLOTRACK dashboard.
+
+Improve the existing UI so users can understand:
+
+- Historical cyclone tracks.
+- Predicted future tracks.
+- Forecast horizon.
+- Forecast issue time.
+- Predicted intensity, when supported.
+- Track uncertainty, when calibrated.
+- Satellite imagery availability.
+- Model training and validation status.
+- Data provenance and limitations.
+- Regional proximity or risk indicators, when supported.
+
+Use actual API responses instead of hardcoded frontend values.
+
+Make the distinction between observed and predicted paths visually clear.
+
+Add understandable loading, empty, error, and unavailable states.
+
+If satellite imagery or a model is unavailable, the UI must remain functional and explain its status without showing fake data.
+
+Keep the dashboard responsive and avoid introducing unnecessary dependencies.
+
+## 7.4 Honest model status system
+
+Maintain consistent status semantics throughout the API and UI.
+
+Use existing equivalents where possible for:
+
+- `TRAINED_EVALUATED`
+- `TRAINED_NOT_VALIDATED`
+- `UNTRAINED`
+- `INSUFFICIENT_DATA`
+- `NOT_CALIBRATED`
+- `DEMO_ONLY`
+- `CREDENTIALS_REQUIRED`
+- `UNAVAILABLE`
+
+Do not label a model `TRAINED_EVALUATED` without a genuine training run and valid evaluation evidence.
+
+Do not label satellite fusion as validated without genuine aligned inputs and a valid evaluation.
+
+## 7.5 Testing
+
+Add or update tests for:
+
+- Checkpoint loading and validation.
+- API response schemas.
+- Real versus unavailable model statuses.
+- Prediction timestamps and horizons.
+- Historical versus predicted track separation.
+- Input validation.
+- Missing data and missing modalities.
+- Genuine uncertainty outputs.
+- Risk calculation units and geographic behavior.
+- Satellite metadata parsing and provenance.
+- Image/track alignment, if implemented.
+- Storm-level leakage prevention.
+- UI handling of unavailable sources.
+- Preservation of historical endpoints.
+- No hardcoded evaluation metrics.
+- Error handling when a checkpoint or dataset is missing.
+
+Use small deterministic fixtures for tests.
+
+Do not make the full model-training workflow run during every unit test.
+
+Run:
+
+1. The complete backend test suite.
+2. Relevant ML and data pipeline tests.
+3. Satellite and risk tests.
+4. The frontend production build.
+5. Additional integration tests that are practical in the current environment.
+
+Record exact commands, exit codes, test counts, warnings, and failures.
+
+Create:
+
+- `docs/PHASE7_INTEGRATION_REPORT.md`
+- `docs/FINAL_SYSTEM_STATUS.md`
+- `artifacts/audit/phase7_integration_results.json`
+- `artifacts/audit/phase7_test_results.json`
+
+---
+
+# REQUIRED GLOBAL VALIDATION
+
+Before marking Phase 7 complete, verify the following against actual implementation evidence.
+
+## Data and scientific validity
+
+- [ ] NOAA data provenance is reproducible.
+- [ ] Storm-level splits are disjoint.
+- [ ] Designated test storms are preserved.
+- [ ] Training preprocessing does not fit on validation or test data.
+- [ ] No future information leaks into model inputs.
+- [ ] Baselines and models use comparable test cases.
+- [ ] Evaluation metrics are computed from saved predictions.
+- [ ] Trained checkpoints can be loaded in a fresh process.
+- [ ] Model status matches actual evidence.
+- [ ] Uncertainty claims match measured calibration results.
+- [ ] Risk outputs are limited to supported calculations.
+
+## Satellite and fusion validity
+
+- [ ] GIBS visualization is distinguished from scientific imagery.
+- [ ] Provider access is authorized and verified.
+- [ ] Imagery metadata and calibration are preserved.
+- [ ] Image/track alignment is reproducible if paired data exists.
+- [ ] Image and track splits do not leak storm identity.
+- [ ] Fusion uses genuinely distinct input modalities.
+- [ ] No image-model metrics are fabricated.
+- [ ] Missing credentials or imagery are reported clearly.
+
+## Application integrity
+
+- [ ] Existing dashboard functionality is preserved.
+- [ ] Existing API contracts remain compatible.
+- [ ] Model outputs come from real inference.
+- [ ] Observations and predictions are clearly distinguished.
+- [ ] Error and unavailable states work.
+- [ ] Tests and frontend build are executed and their actual results recorded.
+- [ ] Documentation contains accurate reproduction instructions.
+- [ ] No secrets are included in logs, reports, or committed files.
+
+---
+
+# FINAL DELIVERABLES
+
+Maintain all phase-specific reports listed above and create or update:
+
+1. `docs/FINAL_SYSTEM_STATUS.md`
+2. `docs/MASTER_IMPLEMENTATION_SUMMARY.md`
+3. `artifacts/audit/master_phase3_7_initial_inventory.json`
+4. `artifacts/audit/master_phase3_7_data_integrity.json`
+5. `artifacts/audit/phase3_training_config.json`
+6. `artifacts/audit/phase3_evaluation_results.json`
+7. `artifacts/audit/phase3_model_status.json`
+8. `artifacts/audit/phase4_satellite_status.json`
+9. `artifacts/audit/phase5_fusion_results.json`
+10. `artifacts/audit/phase5_model_status.json`
+11. `artifacts/audit/phase6_uncertainty_results.json`
+12. `artifacts/audit/phase6_risk_validation.json`
+13. `artifacts/audit/phase7_integration_results.json`
+14. `artifacts/audit/phase7_test_results.json`
+
+Use the existing repository's directory conventions where equivalent artifacts already exist.
+
+All evaluation JSON files must be generated by actual scripts using real predictions, ground truth, and measured source availability. Never manually fill them with invented numbers.
+
+The final summary must list:
+
+- What was implemented.
+- What was actually executed.
+- Which models were genuinely trained.
+- Which models passed valid evaluation.
+- Which models performed worse than baselines.
+- Whether genuine satellite imagery was available.
+- Whether multimodal fusion was trained and validated.
+- Whether uncertainty was calibrated.
+- Which risk calculations are supported.
+- Test and build results.
+- Remaining blockers and limitations.
+- Exact commands to reproduce results.
+- Files changed and artifacts created.
+
+# EXECUTION AND STOP RULES
+
+Execute phases 3, 4, 5, 6, and 7 in order.
+
+For each phase:
+
+1. Inspect existing implementation.
+2. Implement the required work.
+3. Execute the relevant commands.
+4. Verify the outputs.
+5. Run the appropriate tests.
+6. Write the report and machine-readable evidence.
+7. Continue to the next phase when its prerequisites are satisfied.
+
+Do not stop merely because a plan or report has been written.
+
+If a specific model or data source is blocked, document the blocker and continue independent work where scientifically and technically safe.
+
+Do not fabricate missing data, skip critical validation, or pretend a blocked phase succeeded.
+
+Do not begin a new phase beyond Phase 7. Do not automatically deploy publicly, purchase services, request credentials, or expose secrets.
+
+At the end, provide a concise but complete execution summary and stop for user review.
+
+**BEGIN NOW. Start with Stage 0, inspect the existing repository, and execute the implementation sequentially. The objective is a genuinely functional and honestly evaluated CYCLOTRACK prototype—not a dashboard that merely looks complete.**
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-20T08:16:27+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Users\prana\Downloads\cyclotrack\frontend\src\index.css (LANGUAGE_CSS)
+Cursor is on line: 1
+Other open documents:
+- c:\Users\prana\Downloads\cyclotrack\artifacts\audit\test_results.txt (LANGUAGE_PLAINTEXT)
+- c:\Users\prana\Downloads\cyclotrack\artifacts\audit\data_provenance.json (LANGUAGE_JSON)
+- c:\Users\prana\Downloads\cyclotrack\frontend\index.html (LANGUAGE_HTML)
+- c:\Users\prana\Downloads\cyclotrack\scripts\process_ibtracs.py (LANGUAGE_PYTHON)
+- c:\Users\prana\Downloads\cyclotrack\backend\app\services\satellite_service.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>

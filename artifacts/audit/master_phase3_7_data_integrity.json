@@ -1,0 +1,67 @@
+{
+  "validation_timestamp": "2026-10-20T02:48:27.061912+00:00",
+  "raw_checksum_verified": true,
+  "raw_sha256": "b30984b56c428391eff17a44d1a9662e444fc4ba419417e9613c18db07424155",
+  "modern_era_filter": "SEASON >= 1980 and obs_count >= 4",
+  "total_modern_observations": 18177,
+  "total_modern_cyclones": 466,
+  "temporal_range": {
+    "start": "1980-10-10 06:00:00",
+    "end": "2026-09-24 00:00:00",
+    "start_year": 1980,
+    "end_year": 2026
+  },
+  "manifest_integrity": {
+    "train_storms": 326,
+    "val_storms": 70,
+    "test_storms": 70,
+    "total_storms": 466,
+    "storm_percentages": {
+      "train": 69.957,
+      "val": 15.021,
+      "test": 15.021
+    },
+    "train_observations": 12661,
+    "val_observations": 2821,
+    "test_observations": 2695,
+    "total_observations": 18177,
+    "observation_percentages": {
+      "train": 69.654,
+      "val": 15.52,
+      "test": 14.826
+    },
+    "disjointness_verified": true,
+    "overlap_train_val": 0,
+    "overlap_train_test": 0,
+    "overlap_val_test": 0
+  },
+  "holdout_storms": {
+    "AMPHAN": {
+      "sid": "2020136N10088",
+      "split": "TEST",
+      "preserved": true
+    },
+    "BIPARJOY": {
+      "sid": "2023156N10067",
+      "split": "TEST",
+      "preserved": true
+    },
+    "DANA": {
+      "sid": "2024295N15092",
+      "split": "VAL",
+      "preserved": true
+    },
+    "REMAL": {
+      "sid": "2024145N14087",
+      "split": "VAL",
+      "preserved": true
+    },
+    "MICHAUNG": {
+      "sid": "2023334N08088",
+      "split": "VAL",
+      "preserved": true
+    }
+  },
+  "percentage_correction_note": "Previous Phase 2 report recorded storm-count percentages (69.957%, 15.021%, 15.021%) in place of observation percentages. Actual exact observation split percentages are: Train=69.654% (12,661 obs), Val=15.519% (2,821 obs), Test=14.826% (2,695 obs). Actual exact storm split percentages are: Train=69.957% (326 storms), Val=15.021% (70 storms), Test=15.021% (70 storms). Split membership is 100% preserved without any alteration.",
+  "data_integrity_verdict": "CRITICAL_CHECKS_PASSED"
+}

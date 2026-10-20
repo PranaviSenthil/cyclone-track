@@ -1,0 +1,113 @@
+{
+  "evaluation_timestamp": "2026-10-20T03:24:00.673537+00:00",
+  "total_test_sequences": 1918,
+  "total_test_cyclones": 57,
+  "horizons_evaluated": [
+    "6h",
+    "12h",
+    "24h"
+  ],
+  "track_metrics": {
+    "6h": {
+      "model_mean_km": 32.0,
+      "model_median_km": 27.81,
+      "model_p90_km": 56.9,
+      "linear_baseline_mean_km": 30.82,
+      "linear_baseline_median_km": 24.58,
+      "linear_baseline_p90_km": 57.37,
+      "persistence_mean_km": 83.14,
+      "relative_improvement_vs_baseline_pct": -3.81,
+      "relative_improvement_vs_pers_pct": 61.51,
+      "sample_count": 1918
+    },
+    "12h": {
+      "model_mean_km": 67.93,
+      "model_median_km": 59.95,
+      "model_p90_km": 120.61,
+      "linear_baseline_mean_km": 69.73,
+      "linear_baseline_median_km": 56.68,
+      "linear_baseline_p90_km": 126.66,
+      "persistence_mean_km": 165.16,
+      "relative_improvement_vs_baseline_pct": 2.59,
+      "relative_improvement_vs_pers_pct": 58.87,
+      "sample_count": 1918
+    },
+    "24h": {
+      "model_mean_km": 148.28,
+      "model_median_km": 133.74,
+      "model_p90_km": 262.24,
+      "linear_baseline_mean_km": 163.26,
+      "linear_baseline_median_km": 139.08,
+      "linear_baseline_p90_km": 295.7,
+      "persistence_mean_km": 326.96,
+      "relative_improvement_vs_baseline_pct": 9.17,
+      "relative_improvement_vs_pers_pct": 54.65,
+      "sample_count": 1918
+    }
+  },
+  "intensity_metrics": {
+    "6h": {
+      "model_mae_kts": 3.01,
+      "model_rmse_kts": 4.89,
+      "persistence_mae_kts": 2.67,
+      "persistence_rmse_kts": 5.13,
+      "skill_score_pct": -12.52
+    },
+    "12h": {
+      "model_mae_kts": 5.14,
+      "model_rmse_kts": 7.83,
+      "persistence_mae_kts": 5.05,
+      "persistence_rmse_kts": 8.6,
+      "skill_score_pct": -1.78
+    },
+    "24h": {
+      "model_mae_kts": 8.73,
+      "model_rmse_kts": 12.67,
+      "persistence_mae_kts": 9.32,
+      "persistence_rmse_kts": 14.82,
+      "skill_score_pct": 6.29
+    }
+  },
+  "holdout_storms": {
+    "AMPHAN": {
+      "sid": "2020136N10088",
+      "name": "AMPHAN",
+      "season": 2020,
+      "evaluated_sequences": 40,
+      "results": {
+        "6h": {
+          "gru_mean_km": 32.7,
+          "baseline_mean_km": 32.6
+        },
+        "12h": {
+          "gru_mean_km": 68.9,
+          "baseline_mean_km": 64.7
+        },
+        "24h": {
+          "gru_mean_km": 151.7,
+          "baseline_mean_km": 146.9
+        }
+      }
+    },
+    "BIPARJOY": {
+      "sid": "2023156N10067",
+      "name": "BIPARJOY",
+      "season": 2023,
+      "evaluated_sequences": 102,
+      "results": {
+        "6h": {
+          "gru_mean_km": 24.3,
+          "baseline_mean_km": 26.3
+        },
+        "12h": {
+          "gru_mean_km": 45.2,
+          "baseline_mean_km": 54.9
+        },
+        "24h": {
+          "gru_mean_km": 91.0,
+          "baseline_mean_km": 104.4
+        }
+      }
+    }
+  }
+}

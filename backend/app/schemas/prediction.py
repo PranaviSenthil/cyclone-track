@@ -34,3 +34,12 @@ class AlertDemoRequest(BaseModel):
     landfall_district: str
     max_sustained_wind_kmh: float
     warning_level: str # RED_ALERT, ORANGE_ALERT, YELLOW_WATCH
+
+class RiskAssessmentRequest(BaseModel):
+    storm_id: Optional[str] = None
+    forecast_waypoints: Optional[List[Dict[str, Any]]] = None
+    current_wind_kts: Optional[float] = 65.0
+    custom_lat: Optional[float] = None
+    custom_lon: Optional[float] = None
+    custom_location_name: Optional[str] = None
+

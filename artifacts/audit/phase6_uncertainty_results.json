@@ -1,0 +1,55 @@
+{
+  "calibration_method": "EMPIRICAL_QUANTILE_RESIDUAL_CALIBRATION",
+  "calibration_split": "70_VALIDATION_STORMS_2027_SEQUENCES",
+  "test_split": "70_TEST_STORMS_1918_SEQUENCES",
+  "calibrated_radii": {
+    "6h": {
+      "r70_km": 39.82,
+      "r80_km": 47.05,
+      "r90_km": 61.4,
+      "mean_residual_km": 33.24,
+      "median_residual_km": 28.35,
+      "p95_residual_km": 75.68,
+      "validation_sample_size": 2027
+    },
+    "12h": {
+      "r70_km": 81.55,
+      "r80_km": 96.37,
+      "r90_km": 122.35,
+      "mean_residual_km": 67.91,
+      "median_residual_km": 59.58,
+      "p95_residual_km": 145.86,
+      "validation_sample_size": 2027
+    },
+    "24h": {
+      "r70_km": 173.18,
+      "r80_km": 205.64,
+      "r90_km": 255.63,
+      "mean_residual_km": 142.26,
+      "median_residual_km": 127.09,
+      "p95_residual_km": 304.09,
+      "validation_sample_size": 2027
+    }
+  },
+  "empirical_test_coverage": {
+    "6h": {
+      "target_70pct_actual_coverage": 72.47,
+      "target_80pct_actual_coverage": 81.86,
+      "target_90pct_actual_coverage": 91.97,
+      "test_sample_size": 1918
+    },
+    "12h": {
+      "target_70pct_actual_coverage": 69.6,
+      "target_80pct_actual_coverage": 79.61,
+      "target_90pct_actual_coverage": 90.3,
+      "test_sample_size": 1918
+    },
+    "24h": {
+      "target_70pct_actual_coverage": 67.88,
+      "target_80pct_actual_coverage": 78.1,
+      "target_90pct_actual_coverage": 88.74,
+      "test_sample_size": 1918
+    }
+  },
+  "status": "CALIBRATED_EMPIRICAL_QUANTILES"
+}

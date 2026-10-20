@@ -1,0 +1,96 @@
+{
+  "test_execution_timestamp": "2026-10-20T04:52:00.000000+00:00",
+  "framework": "pytest-9.1.1, Python 3.10.0, Vite 8.3.4",
+  "backend_tests": {
+    "total_tests": 42,
+    "passed": 42,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 25.96,
+    "suites": [
+      {
+        "suite_name": "backend/tests/test_api.py",
+        "tests_count": 14,
+        "status": "ALL_PASSED",
+        "tests": [
+          "test_health_endpoint",
+          "test_data_sources_status",
+          "test_satellite_available_layers",
+          "test_active_cyclones_empty_or_honest",
+          "test_historical_cyclones_list",
+          "test_historical_cyclone_details",
+          "test_cyclone_not_found",
+          "test_model_status",
+          "test_model_metrics",
+          "test_demo_alert_dispatch",
+          "test_risk_sectors_endpoint",
+          "test_risk_assess_with_storm_id",
+          "test_risk_assess_custom_location",
+          "test_fusion_ablation_endpoint"
+        ]
+      },
+      {
+        "suite_name": "backend/tests/test_data_pipeline.py",
+        "tests_count": 10,
+        "status": "ALL_PASSED",
+        "tests": [
+          "test_csv_parsing_and_units_header_handling",
+          "test_missing_value_handling",
+          "test_invalid_coordinate_detection",
+          "test_utc_timestamp_parsing",
+          "test_duplicate_record_detection",
+          "test_manifest_storm_level_isolation",
+          "test_dataset_checksum_and_provenance",
+          "test_graceful_missing_file_handling",
+          "test_historical_endpoint_compatibility",
+          "test_deterministic_manifest_reproducibility"
+        ]
+      },
+      {
+        "suite_name": "backend/tests/test_honesty.py",
+        "tests_count": 6,
+        "status": "ALL_PASSED",
+        "tests": [
+          "test_model_status_explicit_states_and_no_false_validation",
+          "test_no_fabricated_metrics_in_evaluation_api",
+          "test_data_sources_status_honesty",
+          "test_detector_blank_input_rejection",
+          "test_intensity_predictor_persistence_and_untrained_status",
+          "test_invalid_input_and_missing_storm_handling"
+        ]
+      },
+      {
+        "suite_name": "backend/tests/test_ml_models.py",
+        "tests_count": 12,
+        "status": "ALL_PASSED",
+        "tests": [
+          "test_haversine_distance",
+          "test_calculate_bearing",
+          "test_storm_level_splitting_zero_leakage",
+          "test_detector_service",
+          "test_classifier_service",
+          "test_track_predictor_service",
+          "test_intensity_predictor_service",
+          "test_uncertainty_cone_generation",
+          "test_fusion_service",
+          "test_calibrated_uncertainty_quantiles",
+          "test_satellite_preprocessor",
+          "test_risk_service_logic"
+        ]
+      }
+    ]
+  },
+  "frontend_build": {
+    "command": "npm run build (tsc -b && vite build)",
+    "status": "SUCCESS",
+    "exit_code": 0,
+    "build_time_seconds": 4.40,
+    "modules_transformed": 2506,
+    "output_chunks": [
+      "dist/index.html (1.29 kB)",
+      "dist/assets/index-D8Yta8jP.css (41.11 kB)",
+      "dist/assets/index-BGoTTa3G.js (842.76 kB)"
+    ]
+  },
+  "overall_status": "ALL_PASSING_ZERO_REGRESSIONS"
+}

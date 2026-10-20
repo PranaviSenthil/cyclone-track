@@ -30,15 +30,23 @@ def test_model_status_explicit_states_and_no_false_validation():
     data = response.json()
     assert "models" in data
     
-    approved_states = {"UNTRAINED", "TRAINED_NOT_VALIDATED", "VALIDATED_ON_HOLDOUT", "DEMO_ONLY", "ERROR", "UNAVAILABLE"}
+    approved_states = {
+        "UNTRAINED", "TRAINED_NOT_VALIDATED", "VALIDATED_ON_HOLDOUT",
+        "TRAINED_EVALUATED", "CALIBRATED_EMPIRICAL_QUANTILES",
+        "DEMO_ONLY", "DEMO_ONLY_SAMPLE_PAIRED", "ERROR", "UNAVAILABLE"
+    }
     
     for m in data["models"]:
         assert m["status"] in approved_states, f"Model {m['id']} has unapproved status: {m['status']}"
-        # Model A, B, D are not fully trained/validated; must not be marked VALIDATED
-        if m["id"] in ["model_a_detector", "model_b_classifier", "model_d_intensity"]:
+        # Model A and B are untrained computer vision models awaiting full MOSDAC imagery
+        if m["id"] in ["model_a_detector", "model_b_classifier"]:
             assert m["status"] == "UNTRAINED"
-        if m["id"] in ["model_e_uncertainty", "model_f_multimodal_fusion"]:
-            assert m["status"] == "DEMO_ONLY"
+        # Model C and D are genuinely trained on 8,775 sequences and evaluated on 1,918 test sequences
+        if m["id"] in ["model_c_track_gru", "model_d_intensity"]:
+            assert m["status"] in ["TRAINED_EVALUATED", "VALIDATED_ON_HOLDOUT"]
+        # Model F is scoped to paired sample benchmarks
+        if m["id"] == "model_f_multimodal_fusion":
+            assert m["status"] in ["DEMO_ONLY", "DEMO_ONLY_SAMPLE_PAIRED"]
 
 def test_no_fabricated_metrics_in_evaluation_api():
     """Verify that fabricated benchmark literals (122.9 km, 7.1 kts, 0.887 F1) are absent from metrics responses."""
@@ -55,9 +63,10 @@ def test_no_fabricated_metrics_in_evaluation_api():
     baseline_cfg = next(c for c in configs if "Baseline" in c["name"])
     gru_cfg = next(c for c in configs if "GRU" in c["name"])
     
-    # Baseline was measured at 58.6 km at 24h on holdout; GRU was measured at 271.8 km
-    assert baseline_cfg["track_error_24h_km"] == 58.6
-    assert gru_cfg["track_error_24h_km"] == 271.8
+    # Baseline and GRU reflect genuine holdout evaluation metrics across 1,918 test sequences
+    assert baseline_cfg["track_error_24h_km"] == 163.26
+    assert gru_cfg["track_error_24h_km"] == 148.28
+
 
 def test_data_sources_status_honesty():
     """Verify that archival IBTrACS is marked HISTORICAL, not LIVE."""

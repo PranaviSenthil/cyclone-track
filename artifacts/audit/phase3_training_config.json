@@ -1,0 +1,32 @@
+{
+  "training_timestamp_utc": "2026-10-20T03:14:03.462560Z",
+  "random_seed": 42,
+  "device": "cpu",
+  "track_model": {
+    "architecture": "CycloneGRUTrackNet",
+    "input_dim": 6,
+    "hidden_dim": 64,
+    "num_layers": 2,
+    "dropout": 0.1,
+    "learning_rate": 0.003,
+    "batch_size": 32,
+    "best_epoch": 14,
+    "best_val_loss": 0.51257,
+    "checkpoint_sha256": "01d846e9f102555d728bff24b49dfa81bbf59f18a3bd54b3c3ffb9983f9ba36f"
+  },
+  "intensity_model": {
+    "architecture": "IntensityRegressionNet",
+    "input_dim": 6,
+    "hidden_dim": 48,
+    "learning_rate": 0.003,
+    "best_epoch": 3,
+    "best_val_loss": 82.33833,
+    "checkpoint_sha256": "f6b6d75089424f6f97ecaef0d37a08ae7f5182532a5f0fdf3c22c9d0fea2dce3"
+  },
+  "dataset_hashes": {
+    "modern_data_sha256": "214d7c573789feae3dbbc1ed0e9b7308fc1599dd9408615a4150008c741aef4b",
+    "train_manifest_sha256": "86496db1874d59157d0e51379ff305dd6d0397b2889d4cda8b2865ea8a80fe66",
+    "val_manifest_sha256": "7c7c5462b9f02c80fda833d53605c7cd4b281a4f1234b2b7fa11915321600a45",
+    "test_manifest_sha256": "711887ead1ebe7b22c3adb11d7d6b31add4466bee03814ed047a6044ce7bc141"
+  }
+}

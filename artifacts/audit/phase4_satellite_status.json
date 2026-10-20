@@ -1,0 +1,64 @@
+{
+  "audit_timestamp": "2026-10-20T03:42:00.000000+00:00",
+  "phase": "PHASE_4_SATELLITE_DATA_INGESTION_AND_PREPROCESSING",
+  "providers": [
+    {
+      "provider_name": "NASA GIBS (Earthdata)",
+      "status": "OPERATIONAL",
+      "authenticated": true,
+      "auth_type": "PUBLIC_WMTS_ANONYMOUS",
+      "data_boundary": "BROWSER_RENDERED_WMTS_TILES_ONLY",
+      "scientific_ml_suitable": false,
+      "details": "High-resolution browse imagery tiles (EPSG:3857, Level 9) dynamically fetched for Leaflet map overlay. Not raw calibrated multispectral radiance tensors.",
+      "available_layers": [
+        "VIIRS_SNPP_CorrectedReflectance_TrueColor",
+        "MODIS_Terra_CorrectedReflectance_TrueColor",
+        "MODIS_Aqua_CorrectedReflectance_TrueColor",
+        "AIRS_Precipitation_Day",
+        "IMERG_Precipitation_Rate"
+      ]
+    },
+    {
+      "provider_name": "ISRO MOSDAC (INSAT-3D/3DR)",
+      "status": "CREDENTIALS_REQUIRED",
+      "authenticated": false,
+      "auth_type": "BEARER_TOKEN_REGISTRATION_REQUIRED",
+      "data_boundary": "CALIBRATED_SCIENTIFIC_HDF5_NETCDF",
+      "scientific_ml_suitable": true,
+      "blocker_details": "Official ISRO MOSDAC download API requires user registration, institution authorization, and user-specific bearer tokens. Environment variables MOSDAC_API_KEY and MOSDAC_USER_EMAIL are not configured in local environment. Unauthenticated requests are rejected by MOSDAC SAC security policies.",
+      "supported_products": [
+        "3R_IMG_L1B_STD",
+        "3D_IMG_L2B_HEM",
+        "3R_SND_L2B_DWV"
+      ]
+    },
+    {
+      "provider_name": "Local Verified Satellite Benchmark Repository",
+      "status": "PARTIALLY_AVAILABLE",
+      "authenticated": true,
+      "auth_type": "LOCAL_VERIFIED_MANIFEST",
+      "data_boundary": "CALIBRATED_BENCHMARK_SCENES",
+      "scientific_ml_suitable": true,
+      "total_curated_scenes": 5,
+      "manifest_path": "ml/data/sample_imagery/manifest.json",
+      "split_assignments": {
+        "train": ["MOCHA (2023)", "DEPRESSION_BOB_01 (2023)"],
+        "val": ["DANA (2024)"],
+        "test": ["AMPHAN (2020)", "BIPARJOY (2023)"]
+      },
+      "details": "Curated georeferenced INSAT-3DR thermal infrared (TIR1 10.8um) benchmark images with verified bounding coordinates and IBTrACS alignment."
+    }
+  ],
+  "preprocessing_pipeline": {
+    "module": "backend/app/services/satellite/satellite_preprocessor.py",
+    "capabilities": [
+      "Spatial cropping centered on IBTrACS center coordinates",
+      "Temporal alignment verification (tolerance window: +/- 3.0 hours)",
+      "Radiance-to-Brightness-Temperature Planck inversion for 10.8um channel",
+      "Input quality screening (std-dev threshold >= 3.0, NaN detection)",
+      "Deterministic SHA-256 file checksum verification"
+    ],
+    "status": "IMPLEMENTED_AND_VERIFIED"
+  },
+  "overall_verdict": "INTERFACE_OPERATIONAL_LARGE_ARCHIVE_BLOCKED_BY_CREDENTIALS"
+}

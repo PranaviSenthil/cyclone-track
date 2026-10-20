@@ -137,3 +137,65 @@ def test_fusion_service():
     assert "fused_track" in res
     assert "uncertainty_cones" in res
     assert "intensity_forecast" in res
+
+def test_calibrated_uncertainty_quantiles():
+    engine = ForecastUncertaintyEngine()
+    assert engine.IS_CALIBRATED is True
+    assert engine.CONE_TYPE == "EMPIRICAL_QUANTILE_RESIDUAL_CALIBRATION"
+    # Radii must grow monotonically with lead time
+    r6 = engine.CALIBRATED_QUANTILES[6]["r80_km"]
+    r12 = engine.CALIBRATED_QUANTILES[12]["r80_km"]
+    r24 = engine.CALIBRATED_QUANTILES[24]["r80_km"]
+    assert r6 < r12 < r24
+    assert 40.0 < r6 < 55.0
+    assert 85.0 < r12 < 110.0
+    assert 180.0 < r24 < 230.0
+
+def test_satellite_preprocessor():
+    from backend.app.services.satellite.satellite_preprocessor import SatellitePreprocessor
+    from PIL import Image
+
+    preproc = SatellitePreprocessor(target_size=(256, 256))
+    
+    # 1. Temporal alignment check
+    aligned, delta_h = preproc.verify_temporal_alignment("2023-06-11T12:00:00Z", "2023-06-11T13:30:00Z", max_delta_hours=3.0)
+    assert aligned is True
+    assert delta_h == 1.5
+
+    misaligned, delta_h2 = preproc.verify_temporal_alignment("2023-06-11T12:00:00Z", "2023-06-11T18:00:00Z", max_delta_hours=3.0)
+    assert misaligned is False
+    assert delta_h2 == 6.0
+
+    # 2. Planck brightness temperature conversion
+    rad = np.array([50.0, 75.0, 100.0], dtype=np.float32)
+    tb = preproc.radiance_to_brightness_temp(rad, nu=925.925)
+    # Brightness temperature of cold convective cloud tops typically 200 - 320 Kelvin
+    assert np.all(tb > 180.0) and np.all(tb < 360.0)
+
+    # 3. Quality screening
+    uniform_arr = np.ones((256, 256, 3), dtype=np.float32) * 128.0
+    val_res = preproc.validate_image_quality(uniform_arr)
+    assert val_res["valid"] is False
+
+def test_risk_service_logic():
+    from backend.app.services.risk_service import risk_service
+
+    # Test IMD scale classification
+    assert risk_service.classify_imd_intensity(25.0)["code"] == "D"
+    assert risk_service.classify_imd_intensity(40.0)["code"] == "CS"
+    assert risk_service.classify_imd_intensity(75.0)["code"] == "VSCS"
+    assert risk_service.classify_imd_intensity(100.0)["code"] == "ESCS"
+    assert risk_service.classify_imd_intensity(135.0)["code"] == "SuCS"
+
+    # Test coastal proximity calculation
+    waypoints = [
+        {"lead_time_hours": 6, "lat": 19.5, "lon": 85.5},
+        {"lead_time_hours": 12, "lat": 19.8, "lon": 85.8}, # Near Puri/Paradip
+        {"lead_time_hours": 24, "lat": 20.5, "lon": 86.5}
+    ]
+    res = risk_service.assess_coastal_risk(waypoints, current_wind_kts=85.0)
+    assert "most_exposed_sector" in res
+    assert "Puri" in res["most_exposed_sector"]["sector_name"] or "Paradip" in res["most_exposed_sector"]["sector_name"]
+    assert res["most_exposed_sector"]["minimum_distance_km"] < 50.0
+    assert res["most_exposed_sector"]["proximity_level"] == "CRITICAL_PROXIMITY"
+

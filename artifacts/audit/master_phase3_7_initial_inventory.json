@@ -1,0 +1,58 @@
+{
+  "audit_timestamp": "2026-10-20T02:48:27.052359+00:00",
+  "project_root": "C:\\Users\\prana\\Downloads\\cyclotrack",
+  "environment": {
+    "os": "Windows-10-10.0.26200-SP0",
+    "python_version": "3.10.0 (tags/v3.10.0:b494f59, Oct  4 2021, 19:00:18) [MSC v.1929 64 bit (AMD64)]",
+    "cpu_count": 16,
+    "ram_total_gb": 15.33,
+    "ram_available_gb": 5.36,
+    "disk_total_gb": 475.71,
+    "disk_free_gb": 230.91,
+    "cuda_available": false
+  },
+  "checkpoints_inventory": {
+    "classifier.pt": {
+      "size_bytes": 1705845,
+      "sha256": "57b4c19cece7de8b2197eef2e0338628f891beda69c716dc1dc73fcedb2a4d4b"
+    },
+    "detector.pt": {
+      "size_bytes": 5776225,
+      "sha256": "eca4493e2cab8efe0da450b8e60936e269e0c0dcbd86faa2437ba5cbbe111a45"
+    },
+    "intensity.pt": {
+      "size_bytes": 16037,
+      "sha256": "3e088ad36ec2874d1498a59e1de7bbfc466b6f346e8a4c7121fe194532d29480"
+    },
+    "track_gru.pt": {
+      "size_bytes": 179039,
+      "sha256": "58e68783b275cf966dc31f2bbb7b8f69f1ce443ed2f4b5bf6b729fcb2adcbc8a"
+    }
+  },
+  "evaluations_inventory": {
+    "track_eval.json": {
+      "size_bytes": 1071,
+      "sha256": "1168c78dd8bcda20bf5acb2d701be3276ad86e3346de8493c4861d894bd77d2b"
+    }
+  },
+  "data_files": {
+    "raw_ibtracs": {
+      "path": "ml/data/raw/ibtracs/ibtracs.NI.list.v04r01.csv",
+      "size_bytes": 27886424,
+      "sha256": "b30984b56c428391eff17a44d1a9662e444fc4ba419417e9613c18db07424155",
+      "has_units_row": true,
+      "columns": 174
+    },
+    "processed_modern": {
+      "path": "ml/data/processed/ibtracs/ibtracs_ni_modern.csv",
+      "size_bytes": 2110793,
+      "sha256": "214d7c573789feae3dbbc1ed0e9b7308fc1599dd9408615a4150008c741aef4b",
+      "rows": 18177,
+      "unique_cyclones": 466
+    }
+  },
+  "backups_created": [
+    "C:\\Users\\prana\\Downloads\\cyclotrack\\artifacts\\checkpoints_phase2_backup",
+    "C:\\Users\\prana\\Downloads\\cyclotrack\\artifacts\\evaluations_phase2_backup"
+  ]
+}

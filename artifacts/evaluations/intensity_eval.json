@@ -1,0 +1,28 @@
+{
+  "model": "IntensityRegressionNet",
+  "best_epoch": 3,
+  "final_val_loss": 82.3383,
+  "test_results": {
+    "6h": {
+      "model_mae_kts": 3.01,
+      "model_rmse_kts": 4.89,
+      "persistence_mae_kts": 2.67,
+      "persistence_rmse_kts": 5.13,
+      "skill_score_pct": -12.52
+    },
+    "12h": {
+      "model_mae_kts": 5.14,
+      "model_rmse_kts": 7.83,
+      "persistence_mae_kts": 5.05,
+      "persistence_rmse_kts": 8.6,
+      "skill_score_pct": -1.78
+    },
+    "24h": {
+      "model_mae_kts": 8.73,
+      "model_rmse_kts": 12.67,
+      "persistence_mae_kts": 9.32,
+      "persistence_rmse_kts": 14.82,
+      "skill_score_pct": 6.29
+    }
+  }
+}

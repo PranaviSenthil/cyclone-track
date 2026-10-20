@@ -24,7 +24,13 @@
     "intensity_wind_kts": 95,
     "pressure_hpa": 955,
     "channel": "IR_TIR1_10.8um",
-    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK",
+    "sha256": "1fabccac4132eccc25e998abfd13e6a09f2bc5db7a6e42508d1128c4008a3890",
+    "file_size_bytes": 27915,
+    "sid": "2023156N10067",
+    "split": "test",
+    "temporal_tolerance_hours": 3.0,
+    "sensor": "INSAT-3DR Imager (TIR1 10.8um)"
   },
   {
     "filename": "mocha_20230513_super.jpg",
@@ -51,7 +57,13 @@
     "intensity_wind_kts": 145,
     "pressure_hpa": 910,
     "channel": "IR_TIR1_10.8um",
-    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK",
+    "sha256": "9eaeb845f77d609f02bd838ba63e65c2621c9794e568ad8c7fc19d07dc52312b",
+    "file_size_bytes": 23897,
+    "sid": "2023129N08091",
+    "split": "train",
+    "temporal_tolerance_hours": 3.0,
+    "sensor": "INSAT-3DR Imager (TIR1 10.8um)"
   },
   {
     "filename": "dana_20241024_developing.jpg",
@@ -78,7 +90,13 @@
     "intensity_wind_kts": 70,
     "pressure_hpa": 972,
     "channel": "IR_TIR1_10.8um",
-    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK",
+    "sha256": "508e46d077c1dc253e93255fc5e7a37dc2ad5717949044a7e39ae5a4dcb403a2",
+    "file_size_bytes": 25531,
+    "sid": "2024296N15090",
+    "split": "val",
+    "temporal_tolerance_hours": 3.0,
+    "sensor": "INSAT-3DR Imager (TIR1 10.8um)"
   },
   {
     "filename": "amphan_20200518_super.jpg",
@@ -105,7 +123,13 @@
     "intensity_wind_kts": 140,
     "pressure_hpa": 907,
     "channel": "IR_TIR1_10.8um",
-    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK",
+    "sha256": "8bde0ee9d971c379702f6923f6890924230ef0887624dc603a2d901c3ee89c05",
+    "file_size_bytes": 24670,
+    "sid": "2020136N10088",
+    "split": "test",
+    "temporal_tolerance_hours": 3.0,
+    "sensor": "INSAT-3DR Imager (TIR1 10.8um)"
   },
   {
     "filename": "depression_disorganized.jpg",
@@ -132,6 +156,12 @@
     "intensity_wind_kts": 30,
     "pressure_hpa": 1002,
     "channel": "IR_TIR1_10.8um",
-    "provenance": "VERIFIED_SATELLITE_BENCHMARK"
+    "provenance": "VERIFIED_SATELLITE_BENCHMARK",
+    "sha256": "08b632b39778e5d36d014f6626346a08f7ea5cd651a12d71158d3dfb46140f6c",
+    "file_size_bytes": 23337,
+    "sid": "2023319N11086",
+    "split": "train",
+    "temporal_tolerance_hours": 3.0,
+    "sensor": "INSAT-3DR Imager (TIR1 10.8um)"
   }
 ]

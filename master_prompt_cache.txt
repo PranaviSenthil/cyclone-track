@@ -1,0 +1,80 @@
+<USER_REQUEST>
+# CYCLOTRACK — MASTER IMPLEMENTATION PROMPT: PHASES 3–7
+
+## Project identity
+
+**Project:** CYCLOTRACK — AI-Driven Digital Twin for Multi-Source Tropical Cyclone Pattern Analysis & Prediction
+
+**SIH Problem Statement:** SIH26070  
+**Team:** MISSION_POSSIBLE  
+**Project Directory:** `C:\Users\prana\Downloads\cyclotrack`
+
+**Current state:**
+- Phase 0: Initial audit completed according to the existing report.
+- Phase 1: Honesty corrections and model-status reporting implemented according to the existing report.
+- Phase 2: NOAA IBTrACS historical data pipeline and storm-level manifests implemented according to the existing report.
+- Phase 3–7: Must now be implemented and validated against the actual repository.
+
+The reports above are claims from earlier implementation runs. Independently inspect the actual files and reproduce important checks before relying on them.
+
+## YOUR ROLE
+
+Act as a senior machine-learning engineer, meteorological data scientist, satellite-data engineer, backend engineer, frontend engineer, and software QA engineer.
+
+Continue the existing repository. Do not create a new project, replace the existing dashboard, or redesign the entire application unnecessarily.
+
+Implement Phases 3, 4, 5, 6, and 7 sequentially. Work directly in the existing project using the available local environment. Inspect the code, implement the functionality, execute commands, run tests, and create the documentation and artifacts described below.
+
+**Do not merely generate a plan or write placeholder files. Implement and verify what is feasible in the actual environment.**
+
+If you cannot access the project directory or execute a required operation, report the blocker honestly. Never claim that local files were changed, models trained, satellite data downloaded, or tests passed unless you actually performed and verified those actions.
+
+# GLOBAL NON-NEGOTIABLE RULES
+
+1. Preserve the existing React dashboard, FastAPI backend, API contracts, navigation, map, styling, histori
+<truncated 25941 bytes>
+e supported.
+- Test and build results.
+- Remaining blockers and limitations.
+- Exact commands to reproduce results.
+- Files changed and artifacts created.
+
+# EXECUTION AND STOP RULES
+
+Execute phases 3, 4, 5, 6, and 7 in order.
+
+For each phase:
+
+1. Inspect existing implementation.
+2. Implement the required work.
+3. Execute the relevant commands.
+4. Verify the outputs.
+5. Run the appropriate tests.
+6. Write the report and machine-readable evidence.
+7. Continue to the next phase when its prerequisites are satisfied.
+
+Do not stop merely because a plan or report has been written.
+
+If a specific model or data source is blocked, document the blocker and continue independent work where scientifically and technically safe.
+
+Do not fabricate missing data, skip critical validation, or pretend a blocked phase succeeded.
+
+Do not begin a new phase beyond Phase 7. Do not automatically deploy publicly, purchase services, request credentials, or expose secrets.
+
+At the end, provide a concise but complete execution summary and stop for user review.
+
+**BEGIN NOW. Start with Stage 0, inspect the existing repository, and execute the implementation sequentially. The objective is a genuinely functional and honestly evaluated CYCLOTRACK prototype—not a dashboard that merely looks complete.**
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-20T08:16:27+05:30.
+
+The user's current state is as follows:
+Active Document: c:\Users\prana\Downloads\cyclotrack\frontend\src\index.css (LANGUAGE_CSS)
+Cursor is on line: 1
+Other open documents:
+- c:\Users\prana\Downloads\cyclotrack\artifacts\audit\test_results.txt (LANGUAGE_PLAINTEXT)
+- c:\Users\prana\Downloads\cyclotrack\artifacts\audit\data_provenance.json (LANGUAGE_JSON)
+- c:\Users\prana\Downloads\cyclotrack\frontend\index.html (LANGUAGE_HTML)
+- c:\Users\prana\Downloads\cyclotrack\scripts\process_ibtracs.py (LANGUAGE_PYTHON)
+- c:\Users\prana\Downloads\cyclotrack\backend\app\services\satellite_service.py (LANGUAGE_PYTHON)
+</ADDITIONAL_METADATA>

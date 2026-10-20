@@ -5,10 +5,11 @@ from typing import Optional, Dict, Any
 
 from backend.app.schemas.cyclone import ActiveCycloneResponse
 from backend.app.schemas.satellite import SatelliteAvailableResponse
-from backend.app.schemas.prediction import DetectionRequest, ClassificationRequest, PredictionRequest, AlertDemoRequest
+from backend.app.schemas.prediction import DetectionRequest, ClassificationRequest, PredictionRequest, AlertDemoRequest, RiskAssessmentRequest
 from backend.app.services.cyclone_service import cyclone_service
 from backend.app.services.satellite_service import satellite_service
 from backend.app.services.ml_service import ml_service
+from backend.app.services.risk_service import risk_service, KEY_COASTAL_SECTORS
 from backend.app.config import settings
 
 api_router = APIRouter()
@@ -137,3 +138,43 @@ def generate_demo_alert(req: AlertDemoRequest):
         ],
         "generated_at": datetime.datetime.utcnow().isoformat() + "Z"
     }
+
+@api_router.get("/risk/sectors")
+def get_monitored_sectors():
+    """Returns catalog of key coastal monitoring sectors across the North Indian Ocean basin."""
+    return {
+        "total_sectors": len(KEY_COASTAL_SECTORS),
+        "sectors": KEY_COASTAL_SECTORS,
+        "basin": "North Indian Ocean (Bay of Bengal & Arabian Sea)"
+    }
+
+@api_router.post("/risk/assess")
+def assess_risk(req: RiskAssessmentRequest):
+    """
+    Evaluates geodesic coastal proximity, Time to Closest Approach (TCA),
+    and IMD intensity classification for a forecast track.
+    """
+    waypoints = req.forecast_waypoints
+    current_wind = req.current_wind_kts or 65.0
+
+    # If storm_id provided but no explicit waypoints, generate track forecast first
+    if req.storm_id and not waypoints:
+        pred_res = ml_service.predict_future(storm_id=req.storm_id, current_wind_kts=current_wind)
+        waypoints = pred_res.get("gru_track") or pred_res.get("baseline_track") or []
+        if pred_res.get("intensity_forecast", {}).get("current_observation"):
+            current_wind = pred_res["intensity_forecast"]["current_observation"].get("wind_kts", current_wind)
+
+    if not waypoints:
+        raise HTTPException(
+            status_code=422,
+            detail="Either 'forecast_waypoints' or a valid 'storm_id' must be provided for risk assessment."
+        )
+
+    return risk_service.assess_coastal_risk(
+        forecast_waypoints=waypoints,
+        current_wind_kts=current_wind,
+        custom_lat=req.custom_lat,
+        custom_lon=req.custom_lon,
+        custom_location_name=req.custom_location_name
+    )
+
